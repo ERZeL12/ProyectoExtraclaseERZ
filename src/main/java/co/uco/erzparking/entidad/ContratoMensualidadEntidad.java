@@ -1,0 +1,120 @@
+package co.uco.erzparking.entidad;
+
+import co.uco.erzparking.transversal.UtilFecha;
+import co.uco.erzparking.transversal.UtilObjeto;
+import co.uco.erzparking.transversal.UtilUUID;
+import java.util.Date;
+import java.util.UUID;
+
+
+public class ContratoMensualidadEntidad {
+
+	private UUID id;
+	private Date fechaInicioContrato;
+	private Date fechaFinContrato;
+	private TarifaEntidad tarifa;
+	private UsuarioVehiculoEntidad usuarioVehiculo;
+	private EspacioFisicoEntidad espacioFisico;
+
+	private ContratoMensualidadEntidad(final Builder builder) {
+		setId(builder.id);
+		setFechaInicioContrato(builder.fechaInicioContrato);
+		setFechaFinContrato(builder.fechaFinContrato);
+		setTarifa(builder.tarifa);
+		setUsuarioVehiculo(builder.usuarioVehiculo);
+		setEspacioFisico(builder.espacioFisico);
+	}
+
+	public UUID getId() {
+		return id;
+	}
+
+	public Date getFechaInicioContrato() {
+		return fechaInicioContrato;
+	}
+
+	public Date getFechaFinContrato() {
+		return fechaFinContrato;
+	}
+
+	public TarifaEntidad getTarifa() {
+		return tarifa;
+	}
+
+	public UsuarioVehiculoEntidad getUsuarioVehiculo() {
+		return usuarioVehiculo;
+	}
+
+	public EspacioFisicoEntidad getEspacioFisico() {
+		return espacioFisico;
+	}
+
+	private void setId(final UUID id) {
+		this.id = UtilUUID.obtenerValorDefecto(id);
+	}
+
+	private void setFechaInicioContrato(final Date fechaInicioContrato) {
+		this.fechaInicioContrato = UtilFecha.obtenerValorDefecto(fechaInicioContrato);
+	}
+
+	private void setFechaFinContrato(final Date fechaFinContrato) {
+		this.fechaFinContrato = UtilFecha.obtenerValorDefecto(fechaFinContrato);
+	}
+
+	private void setTarifa(final TarifaEntidad tarifa) {
+		this.tarifa = UtilObjeto.obtenerValorDefecto(tarifa, null);
+	}
+
+	private void setUsuarioVehiculo(final UsuarioVehiculoEntidad usuarioVehiculo) {
+		this.usuarioVehiculo = UtilObjeto.obtenerValorDefecto(usuarioVehiculo, null);
+	}
+
+	private void setEspacioFisico(final EspacioFisicoEntidad espacioFisico) {
+		this.espacioFisico = UtilObjeto.obtenerValorDefecto(espacioFisico, null);
+	}
+
+	public static class Builder {
+
+		private UUID id;
+		private Date fechaInicioContrato;
+		private Date fechaFinContrato;
+		private TarifaEntidad tarifa;
+		private UsuarioVehiculoEntidad usuarioVehiculo;
+		private EspacioFisicoEntidad espacioFisico;
+
+		public Builder id(final UUID id) {
+			this.id = UtilUUID.obtenerValorDefecto(id);
+			return this;
+		}
+
+		public Builder fechaInicioContrato(final Date fechaInicioContrato) {
+			this.fechaInicioContrato = UtilFecha.obtenerValorDefecto(fechaInicioContrato);
+			return this;
+		}
+
+		public Builder fechaFinContrato(final Date fechaFinContrato) {
+			this.fechaFinContrato = UtilFecha.obtenerValorDefecto(fechaFinContrato);
+			return this;
+		}
+
+		public Builder tarifa(final TarifaEntidad tarifa) {
+			this.tarifa = tarifa;
+			return this;
+		}
+
+		public Builder usuarioVehiculo(final UsuarioVehiculoEntidad usuarioVehiculo) {
+			this.usuarioVehiculo = usuarioVehiculo;
+			return this;
+		}
+
+		public Builder espacioFisico(final EspacioFisicoEntidad espacioFisico) {
+			this.espacioFisico = espacioFisico;
+			return this;
+		}
+
+		public ContratoMensualidadEntidad build() {
+			return new ContratoMensualidadEntidad(this);
+		}
+	}
+
+}
