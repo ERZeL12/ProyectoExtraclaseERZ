@@ -5,7 +5,7 @@ import co.uco.erzparking.transversal.UtilUUID;
 import java.util.UUID;
 
 
-public class AtencionVehiculoDTO { 
+public class AtencionVehiculoDTO {  
 
 	private UUID id;
 	private EntradaDTO entrada;
