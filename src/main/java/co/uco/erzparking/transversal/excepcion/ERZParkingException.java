@@ -7,7 +7,7 @@ public class ERZParkingException extends Exception {
 	public ERZParkingException(final String mensaje) {
 		super(mensaje);
 	}
-
+    
 	public ERZParkingException(final String mensaje, final Throwable causa) {
 		super(mensaje, causa);
 	}
