@@ -1,12 +1,11 @@
 package co.uco.erzparking.dto;
 
-
 import co.uco.erzparking.transversal.UtilObjeto;
 import co.uco.erzparking.transversal.UtilUUID;
 import java.util.UUID;
 
-public class AtencionVehiculoDTO {
 
+public class AtencionVehiculoDTO {
 
 	private UUID id;
 	private EntradaDTO entrada;

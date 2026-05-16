@@ -12,7 +12,7 @@
 	<artifactId>erz-parking-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>erz-parking-backend</name>
-	<description>Componente encargado de ofrecer APIs que exponen servicios de negocio con las capacidades que la aplicacion ERZ Parking deberia ofrecer a sus diferentes clientes (clientes de escritorio u otras aplicaciones que consuman los servicios)</description>
+	<description>Componente encargado de ofrecer APIs que exponen servicios de negocio con las capacidades que la aplicacion ERZ Parking deberia ofrecer a sus diferentes clientes</description>
 	<properties>
 		<java.version>25</java.version>
 	</properties>
@@ -25,6 +25,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

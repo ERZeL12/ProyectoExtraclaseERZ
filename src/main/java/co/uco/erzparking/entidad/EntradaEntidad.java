@@ -6,19 +6,20 @@ import co.uco.erzparking.transversal.UtilUUID;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-
 public class EntradaEntidad {
 
 	private UUID id;
 	private LocalDateTime fechaHoraEntrada;
 	private VehiculoEntidad vehiculo;
 	private ServicioEntidad servicio;
+	private OperarioEntidad operario;
 
 	private EntradaEntidad(final Builder builder) {
 		setId(builder.id);
 		setFechaHoraEntrada(builder.fechaHoraEntrada);
 		setVehiculo(builder.vehiculo);
 		setServicio(builder.servicio);
+		setOperario(builder.operario);
 	}
 
 	public UUID getId() {
@@ -37,6 +38,10 @@ public class EntradaEntidad {
 		return servicio;
 	}
 
+	public OperarioEntidad getOperario() {
+		return operario;
+	}
+
 	private void setId(final UUID id) {
 		this.id = UtilUUID.obtenerValorDefecto(id);
 	}
@@ -53,12 +58,17 @@ public class EntradaEntidad {
 		this.servicio = UtilObjeto.obtenerValorDefecto(servicio, null);
 	}
 
+	private void setOperario(final OperarioEntidad operario) {
+		this.operario = UtilObjeto.obtenerValorDefecto(operario, null);
+	}
+
 	public static class Builder {
 
 		private UUID id;
 		private LocalDateTime fechaHoraEntrada;
 		private VehiculoEntidad vehiculo;
 		private ServicioEntidad servicio;
+		private OperarioEntidad operario;
 
 		public Builder id(final UUID id) {
 			this.id = UtilUUID.obtenerValorDefecto(id);
@@ -77,6 +87,11 @@ public class EntradaEntidad {
 
 		public Builder servicio(final ServicioEntidad servicio) {
 			this.servicio = servicio;
+			return this;
+		}
+
+		public Builder operario(final OperarioEntidad operario) {
+			this.operario = operario;
 			return this;
 		}
 

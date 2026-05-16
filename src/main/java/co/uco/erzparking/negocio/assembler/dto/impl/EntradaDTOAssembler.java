@@ -5,7 +5,6 @@ import co.uco.erzparking.negocio.assembler.dto.DTOAssembler;
 import co.uco.erzparking.negocio.dominio.EntradaDominio;
 import co.uco.erzparking.transversal.UtilObjeto;
 
-
 public final class EntradaDTOAssembler implements DTOAssembler<EntradaDominio, EntradaDTO> {
 
 	private static DTOAssembler<EntradaDominio, EntradaDTO> INSTANCE;
@@ -29,6 +28,7 @@ public final class EntradaDTOAssembler implements DTOAssembler<EntradaDominio, E
 				.fechaHoraEntrada(entradaAEnsamblar.getFechaHoraEntrada())
 				.vehiculo(VehiculoDTOAssembler.getInstance().ensamblarDominio(entradaAEnsamblar.getVehiculo()))
 				.servicio(ServicioDTOAssembler.getInstance().ensamblarDominio(entradaAEnsamblar.getServicio()))
+				.operario(OperarioDTOAssembler.getInstance().ensamblarDominio(entradaAEnsamblar.getOperario()))
 				.build();
 	}
 
@@ -40,6 +40,7 @@ public final class EntradaDTOAssembler implements DTOAssembler<EntradaDominio, E
 				.fechaHoraEntrada(entradaAEnsamblar.getFechaHoraEntrada())
 				.vehiculo(VehiculoDTOAssembler.getInstance().ensamblarDTO(entradaAEnsamblar.getVehiculo()))
 				.servicio(ServicioDTOAssembler.getInstance().ensamblarDTO(entradaAEnsamblar.getServicio()))
+				.operario(OperarioDTOAssembler.getInstance().ensamblarDTO(entradaAEnsamblar.getOperario()))
 				.build();
 	}
 

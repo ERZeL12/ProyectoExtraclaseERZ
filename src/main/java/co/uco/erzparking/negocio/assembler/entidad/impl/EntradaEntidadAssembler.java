@@ -5,7 +5,6 @@ import co.uco.erzparking.negocio.assembler.entidad.EntidadAssembler;
 import co.uco.erzparking.negocio.dominio.EntradaDominio;
 import co.uco.erzparking.transversal.UtilObjeto;
 
-
 public final class EntradaEntidadAssembler implements EntidadAssembler<EntradaDominio, EntradaEntidad> {
 
 	private static EntidadAssembler<EntradaDominio, EntradaEntidad> INSTANCE;
@@ -29,6 +28,7 @@ public final class EntradaEntidadAssembler implements EntidadAssembler<EntradaDo
 				.fechaHoraEntrada(entradaAEnsamblar.getFechaHoraEntrada())
 				.vehiculo(VehiculoEntidadAssembler.getInstance().ensamblarEntidad(entradaAEnsamblar.getVehiculo()))
 				.servicio(ServicioEntidadAssembler.getInstance().ensamblarEntidad(entradaAEnsamblar.getServicio()))
+				.operario(OperarioEntidadAssembler.getInstance().ensamblarEntidad(entradaAEnsamblar.getOperario()))
 				.build();
 	}
 
@@ -40,6 +40,7 @@ public final class EntradaEntidadAssembler implements EntidadAssembler<EntradaDo
 				.fechaHoraEntrada(entradaAEnsamblar.getFechaHoraEntrada())
 				.vehiculo(VehiculoEntidadAssembler.getInstance().ensamblarDominio(entradaAEnsamblar.getVehiculo()))
 				.servicio(ServicioEntidadAssembler.getInstance().ensamblarDominio(entradaAEnsamblar.getServicio()))
+				.operario(OperarioEntidadAssembler.getInstance().ensamblarDominio(entradaAEnsamblar.getOperario()))
 				.build();
 	}
 
