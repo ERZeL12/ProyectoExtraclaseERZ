@@ -43,9 +43,11 @@ public class ActualizarServicioCasoUsoImpl implements ActualizarServicioCasoUso 
 	}
 
 	private void actualizar(final ServicioDominio datos) {
+		var existente = daoFactory.getServicioDAO().consultarPorId(datos.getId());
 		var entidad = new ServicioEntidad.Builder()
 				.id(datos.getId())
 				.nombreServicio(datos.getNombreServicio())
+				.estadoActual(existente.isEstadoActual())
 				.build();
 		daoFactory.getServicioDAO().actualizar(datos.getId(), entidad);
 	}

@@ -1,5 +1,7 @@
 package co.uco.erzparking.negocio.fachada.tarifa.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
 import co.uco.erzparking.dto.ServicioDTO;
 import co.uco.erzparking.dto.TarifaDTO;
@@ -30,6 +32,7 @@ public class ConsultarTarifaPorIdFachadaImpl implements ConsultarTarifaPorIdFach
 					? new TipoVehiculoDTO.Builder()
 							.id(resultado.getTipoVehiculo().getId())
 							.nombreVehiculo(resultado.getTipoVehiculo().getNombreVehiculo())
+							.descripcion(resultado.getTipoVehiculo().getDescripcion())
 							.build()
 					: null;
 			var servicioDTO = resultado.getServicio() != null
@@ -52,6 +55,22 @@ public class ConsultarTarifaPorIdFachadaImpl implements ConsultarTarifaPorIdFach
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al procesar la solicitud", excepcion.getMessage());
 		} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new TarifaDTO.Builder()
+					.id(UUID.fromString("2addbabd-1197-48f7-9bec-4b967b51be9c"))
+					.build();
+			var resultado = new ConsultarTarifaPorIdFachadaImpl().ejecutar(filtro);
+			System.out.println("Tarifa consultada: id=" + resultado.getId()
+					+ ", valor=" + resultado.getValorServicio()
+					+ ", inicio=" + resultado.getFechaInicioVigenciaTarifa()
+					+ ", fin=" + resultado.getFechaFinVigenciaTarifa());
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

@@ -33,6 +33,7 @@ public final class ContratoMensualidadDTOAssembler implements DTOAssembler<Contr
 				.tarifa(TarifaDTOAssembler.getInstance().ensamblarDominio(contratoMensualidadAEnsamblar.getTarifa()))
 				.usuarioVehiculo(UsuarioVehiculoDTOAssembler.getInstance().ensamblarDominio(contratoMensualidadAEnsamblar.getUsuarioVehiculo()))
 				.espacioFisico(EspacioFisicoDTOAssembler.getInstance().ensamblarDominio(contratoMensualidadAEnsamblar.getEspacioFisico()))
+				.estadoActual(contratoMensualidadAEnsamblar.isEstadoActual())
 				.build();
 	}
 
@@ -47,6 +48,7 @@ public final class ContratoMensualidadDTOAssembler implements DTOAssembler<Contr
 				.tarifa(TarifaDTOAssembler.getInstance().ensamblarDTO(contratoMensualidadAEnsamblar.getTarifa()))
 				.usuarioVehiculo(UsuarioVehiculoDTOAssembler.getInstance().ensamblarDTO(contratoMensualidadAEnsamblar.getUsuarioVehiculo()))
 				.espacioFisico(EspacioFisicoDTOAssembler.getInstance().ensamblarDTO(contratoMensualidadAEnsamblar.getEspacioFisico()))
+				.estadoActual(contratoMensualidadAEnsamblar.isEstadoActual())
 				.build();
 	}
 

@@ -33,6 +33,7 @@ public class ConsultarTodosTipoVehiculosCasoUsoImpl implements ConsultarTodosTip
 		return new TipoVehiculoDominio.Builder()
 				.id(entidad.getId())
 				.nombreVehiculo(entidad.getNombreVehiculo())
+				.descripcion(entidad.getDescripcion())
 				.build();
 	}
 }

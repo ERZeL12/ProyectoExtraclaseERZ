@@ -3,10 +3,10 @@ package co.uco.erzparking.negocio.casouso.usuario.impl;
 import java.util.UUID;
 
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
-import co.uco.erzparking.dto.UsuarioDTO;
+import co.uco.erzparking.entidad.UsuarioEntidad;
+import co.uco.erzparking.entidad.UsuarioVehiculoEntidad;
 import co.uco.erzparking.negocio.casouso.usuario.QuitarUsuarioCasoUso;
 import co.uco.erzparking.negocio.dominio.UsuarioDominio;
-import co.uco.erzparking.negocio.fachada.usuario.impl.QuitarUsuarioFachadaImpl;
 import co.uco.erzparking.transversal.UtilObjeto;
 import co.uco.erzparking.transversal.excepcion.ERZParkingExcepcion;
 
@@ -23,6 +23,7 @@ public class QuitarUsuarioCasoUsoImpl implements QuitarUsuarioCasoUso {
 	public void ejecutar(final UsuarioDominio datos) {
 		validarIntegridadDatos(datos);
 		validarExiste(datos.getId());
+		validarSinDependencias(datos.getId());
 		quitar(datos);
 	}
 
@@ -41,21 +42,16 @@ public class QuitarUsuarioCasoUsoImpl implements QuitarUsuarioCasoUso {
 		}
 	}
 
+	private void validarSinDependencias(final UUID id) {
+		var usuario = new UsuarioEntidad.Builder().id(id).build();
+		var asociaciones = daoFactory.getUsuarioVehiculoDAO().consultarPorFiltro(new UsuarioVehiculoEntidad.Builder().usuario(usuario).build());
+		if (!asociaciones.isEmpty()) {
+			throw ERZParkingExcepcion.crear("No se puede eliminar el usuario porque tiene vehiculos asociados");
+		}
+	}
+
 	private void quitar(final UsuarioDominio datos) {
 		daoFactory.getUsuarioDAO().eliminar(datos.getId());
 	}
-	
-	public static void main(final String[] args) {
-	    try {
-	        var dto = new UsuarioDTO.Builder()
-	                .id(UUID.fromString("987b6412-6801-4043-ae38-063ee8336da3"))
-	                .build();
-	        new QuitarUsuarioFachadaImpl().ejecutar(dto);
-	        System.out.println("Usuario eliminado exitosamente.");
-	    } catch (Exception e) {
-	        System.err.println("Error: " + e.getMessage());
-	        e.printStackTrace();
-	    }
-	}
-	
+
 }

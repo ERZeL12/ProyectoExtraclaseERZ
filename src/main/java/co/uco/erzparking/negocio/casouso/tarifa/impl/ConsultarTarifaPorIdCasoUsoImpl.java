@@ -41,6 +41,7 @@ public class ConsultarTarifaPorIdCasoUsoImpl implements ConsultarTarifaPorIdCaso
 				? new TipoVehiculoDominio.Builder()
 						.id(entidad.getTipoVehiculo().getId())
 						.nombreVehiculo(entidad.getTipoVehiculo().getNombreVehiculo())
+						.descripcion(entidad.getTipoVehiculo().getDescripcion())
 						.build()
 				: null;
 		var servicio = !UtilObjeto.esNulo(entidad.getServicio())

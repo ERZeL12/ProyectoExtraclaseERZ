@@ -41,10 +41,14 @@ public class ConsultarServicioPorIdCasoUsoImpl implements ConsultarServicioPorId
 				? new TipoServicioDominio.Builder()
 						.id(entidad.getTipoServicio().getId())
 						.nombreServicio(entidad.getTipoServicio().getNombreServicio())
+						.descripcion(entidad.getTipoServicio().getDescripcion())
 						.build()
 				: null;
 		var parqueadero = !UtilObjeto.esNulo(entidad.getParqueadero())
-				? new ParqueaderoDominio.Builder().id(entidad.getParqueadero().getId()).build()
+				? new ParqueaderoDominio.Builder()
+						.id(entidad.getParqueadero().getId())
+						.nombreEstablecimiento(entidad.getParqueadero().getNombreEstablecimiento())
+						.build()
 				: null;
 		return new ServicioDominio.Builder()
 				.id(entidad.getId())

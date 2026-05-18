@@ -1,5 +1,7 @@
 package co.uco.erzparking.negocio.fachada.estadoespaciofisico.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
 import co.uco.erzparking.dto.EstadoEspacioFisicoDTO;
 import co.uco.erzparking.negocio.casouso.estadoespaciofisico.ConsultarEstadoEspacioFisicoPorIdCasoUso;
@@ -34,6 +36,19 @@ public class ConsultarEstadoEspacioFisicoPorIdFachadaImpl implements ConsultarEs
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al procesar la solicitud", excepcion.getMessage());
 		} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new EstadoEspacioFisicoDTO.Builder()
+					.id(UUID.fromString("75db75b1-3f27-4e47-bf10-4f2e42764cf8"))
+					.build();
+			var resultado = new ConsultarEstadoEspacioFisicoPorIdFachadaImpl().ejecutar(filtro);
+			System.out.println("EstadoEspacioFisico consultado: id=" + resultado.getId() + ", nombre=" + resultado.getNombreEstadoEspacioFisico());
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

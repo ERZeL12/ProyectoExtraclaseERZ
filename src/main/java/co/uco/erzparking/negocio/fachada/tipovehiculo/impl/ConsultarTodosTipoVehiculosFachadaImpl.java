@@ -39,7 +39,20 @@ public class ConsultarTodosTipoVehiculosFachadaImpl implements ConsultarTodosTip
 		return new TipoVehiculoDTO.Builder()
 				.id(d.getId())
 				.nombreVehiculo(d.getNombreVehiculo())
+				.descripcion(d.getDescripcion())
 				.build();
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new TipoVehiculoDTO.Builder().build();
+			var resultado = new ConsultarTodosTipoVehiculosFachadaImpl().ejecutar(filtro);
+			System.out.println("Total tipos vehiculo encontrados: " + resultado.size());
+			resultado.forEach(t -> System.out.println(" - " + t.getId() + " | " + t.getNombreVehiculo()));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 }

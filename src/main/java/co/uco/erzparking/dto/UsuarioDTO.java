@@ -19,6 +19,19 @@ public class UsuarioDTO {
 	private String correoElectronico;
 	private CiudadDTO ciudad;
 
+	public UsuarioDTO() {
+		setId(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+		setTipoDocumentoIdentificacion(new TipoDocumentoIdentificacionDTO());
+		setNumeroIdentificacion("");
+		setPrimerNombre("");
+		setSegundoNombre("");
+		setPrimerApellido("");
+		setSegundoApellido("");
+		setNumeroTelefonico(0L);
+		setCorreoElectronico("");
+		setCiudad(new CiudadDTO());
+	}
+
 	private UsuarioDTO(final Builder builder) {
 		setId(builder.id);
 		setTipoDocumentoIdentificacion(builder.tipoDocumentoIdentificacion);
@@ -81,7 +94,7 @@ public class UsuarioDTO {
 	}
 
 	private void setNumeroIdentificacion(final String numeroIdentificacion) {
-		this.numeroIdentificacion = UtilTexto.aplicarTrim(numeroIdentificacion);
+		this.numeroIdentificacion = UtilTexto.eliminarEspaciosInternos(numeroIdentificacion);
 	}
 
 	private void setPrimerNombre(final String primerNombre) {
@@ -105,7 +118,7 @@ public class UsuarioDTO {
 	}
 
 	private void setCorreoElectronico(final String correoElectronico) {
-		this.correoElectronico = UtilTexto.aplicarTrim(correoElectronico);
+		this.correoElectronico = UtilTexto.eliminarEspaciosInternos(correoElectronico);
 	}
 
 	private void setCiudad(final CiudadDTO ciudad) {
@@ -136,7 +149,7 @@ public class UsuarioDTO {
 		}
 
 		public Builder numeroIdentificacion(final String numeroIdentificacion) {
-			this.numeroIdentificacion = UtilTexto.aplicarTrim(numeroIdentificacion);
+			this.numeroIdentificacion = UtilTexto.eliminarEspaciosInternos(numeroIdentificacion);
 			return this;
 		}
 
@@ -166,7 +179,7 @@ public class UsuarioDTO {
 		}
 
 		public Builder correoElectronico(final String correoElectronico) {
-			this.correoElectronico = UtilTexto.aplicarTrim(correoElectronico);
+			this.correoElectronico = UtilTexto.eliminarEspaciosInternos(correoElectronico);
 			return this;
 		}
 

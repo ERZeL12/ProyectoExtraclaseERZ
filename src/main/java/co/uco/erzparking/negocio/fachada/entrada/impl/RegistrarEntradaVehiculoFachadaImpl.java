@@ -45,13 +45,13 @@ public class RegistrarEntradaVehiculoFachadaImpl implements RegistrarEntradaVehi
 		try {
 			var dto = new EntradaDTO.Builder()
 					.vehiculo(new VehiculoDTO.Builder()
-							.id(UUID.fromString("UUID_DE_VEHICULO"))
+							.id(UUID.fromString("be6c0e80-dcea-4fb0-b443-3b0d728a08a9"))
 							.build())
 					.servicio(new ServicioDTO.Builder()
-							.id(UUID.fromString("UUID_DE_SERVICIO"))
+							.id(UUID.fromString("54d2035f-120c-47e4-a54d-06b149349c11"))
 							.build())
 					.operario(new OperarioDTO.Builder()
-							.id(UUID.fromString("UUID_DE_OPERARIO"))
+							.id(UUID.fromString("4318b80c-b391-490c-a49e-e94dc3efd7c0"))
 							.build())
 					.build();
 			new RegistrarEntradaVehiculoFachadaImpl().ejecutar(dto);

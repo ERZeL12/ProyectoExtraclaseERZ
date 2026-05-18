@@ -14,6 +14,8 @@ import co.uco.erzparking.datos.dao.sql.SQLDAO;
 import co.uco.erzparking.entidad.ServicioEntidad;
 import co.uco.erzparking.entidad.TarifaEntidad;
 import co.uco.erzparking.entidad.TipoVehiculoEntidad;
+import co.uco.erzparking.transversal.UtilFecha;
+import co.uco.erzparking.transversal.UtilObjeto;
 import co.uco.erzparking.transversal.excepcion.ERZParkingExcepcion;
 
 public class TarifaSQLServerDAO extends SQLDAO implements TarifaDAO {
@@ -24,14 +26,19 @@ public class TarifaSQLServerDAO extends SQLDAO implements TarifaDAO {
 
 	@Override
 	public void crear(final TarifaEntidad entidad) {
-		final String sql = "INSERT INTO Tarifa (id, valorServicio, fechaInicioVigenciaTarifa, fechaFinVigenciaTarifa, tipoVehiculo_id, servicio_id) VALUES (?, ?, ?, ?, ?, ?)";
+		final String sql = "INSERT INTO Tarifa (id, valorServicio, fechaInicioVigenciaTarifa, fechaFinVigenciaTarifa, tipoVehiculo_id, servicio_id, estadoActual) VALUES (?, ?, ?, ?, ?, ?, ?)";
 		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
 			ps.setString(1, entidad.getId().toString());
 			ps.setDouble(2, entidad.getValorServicio());
 			ps.setDate(3, new Date(entidad.getFechaInicioVigenciaTarifa().getTime()));
-			ps.setDate(4, new Date(entidad.getFechaFinVigenciaTarifa().getTime()));
+			if (UtilFecha.esSentinela(entidad.getFechaFinVigenciaTarifa())) {
+				ps.setNull(4, java.sql.Types.DATE);
+			} else {
+				ps.setDate(4, new Date(entidad.getFechaFinVigenciaTarifa().getTime()));
+			}
 			ps.setString(5, entidad.getTipoVehiculo().getId().toString());
 			ps.setString(6, entidad.getServicio().getId().toString());
+			ps.setBoolean(7, entidad.isEstadoActual());
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw ERZParkingExcepcion.crear(e, "Error al crear la tarifa", "Error al crear la tarifa");
@@ -39,8 +46,20 @@ public class TarifaSQLServerDAO extends SQLDAO implements TarifaDAO {
 	}
 
 	@Override
+	public void cambiarEstadoActual(final UUID id, final boolean nuevoEstado) {
+		final String sql = "UPDATE Tarifa SET estadoActual = ? WHERE id = ?";
+		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
+			ps.setBoolean(1, nuevoEstado);
+			ps.setString(2, id.toString());
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw ERZParkingExcepcion.crear(e, "Error al cambiar el estado de la tarifa", "SQLException al cambiar estadoActual en tabla Tarifa: " + e.getMessage());
+		}
+	}
+
+	@Override
 	public TarifaEntidad consultarPorId(final UUID id) {
-		final String sql = "SELECT t.id, t.valorServicio, t.fechaInicioVigenciaTarifa, t.fechaFinVigenciaTarifa, "
+		final String sql = "SELECT t.id, t.valorServicio, t.fechaInicioVigenciaTarifa, t.fechaFinVigenciaTarifa, t.estadoActual, "
 				+ "tv.id as tipoVehiculo_id, tv.nombreVehiculo, s.id as servicio_id, s.nombreServicio "
 				+ "FROM Tarifa t "
 				+ "INNER JOIN TipoVehiculo tv ON t.tipoVehiculo_id = tv.id "
@@ -66,16 +85,35 @@ public class TarifaSQLServerDAO extends SQLDAO implements TarifaDAO {
 
 	@Override
 	public List<TarifaEntidad> consultarPorFiltro(final TarifaEntidad filtro) {
-		final String sql = "SELECT t.id, t.valorServicio, t.fechaInicioVigenciaTarifa, t.fechaFinVigenciaTarifa, "
+		final StringBuilder sql = new StringBuilder(
+				"SELECT t.id, t.valorServicio, t.fechaInicioVigenciaTarifa, t.fechaFinVigenciaTarifa, t.estadoActual, "
 				+ "tv.id as tipoVehiculo_id, tv.nombreVehiculo, s.id as servicio_id, s.nombreServicio "
 				+ "FROM Tarifa t "
 				+ "INNER JOIN TipoVehiculo tv ON t.tipoVehiculo_id = tv.id "
-				+ "INNER JOIN Servicio s ON t.servicio_id = s.id";
+				+ "INNER JOIN Servicio s ON t.servicio_id = s.id "
+				+ "WHERE 1=1");
+		final List<Object> parametros = new ArrayList<>();
+
+		if (!UtilObjeto.esNulo(filtro)) {
+			if (!UtilObjeto.esNulo(filtro.getTipoVehiculo()) && !UtilObjeto.esNulo(filtro.getTipoVehiculo().getId())) {
+				sql.append(" AND t.tipoVehiculo_id = ?");
+				parametros.add(filtro.getTipoVehiculo().getId().toString());
+			}
+			if (!UtilObjeto.esNulo(filtro.getServicio()) && !UtilObjeto.esNulo(filtro.getServicio().getId())) {
+				sql.append(" AND t.servicio_id = ?");
+				parametros.add(filtro.getServicio().getId().toString());
+			}
+		}
+
 		final List<TarifaEntidad> resultados = new ArrayList<>();
-		try (PreparedStatement ps = getConexion().prepareStatement(sql);
-				ResultSet rs = ps.executeQuery()) {
-			while (rs.next()) {
-				resultados.add(construirTarifaEntidad(rs));
+		try (PreparedStatement ps = getConexion().prepareStatement(sql.toString())) {
+			for (int i = 0; i < parametros.size(); i++) {
+				ps.setObject(i + 1, parametros.get(i));
+			}
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next()) {
+					resultados.add(construirTarifaEntidad(rs));
+				}
 			}
 		} catch (SQLException e) {
 			throw ERZParkingExcepcion.crear(e, "Error al consultar tarifas", "Error al consultar tarifas");
@@ -85,13 +123,14 @@ public class TarifaSQLServerDAO extends SQLDAO implements TarifaDAO {
 
 	// Consulta tarifa vigente para tipo de vehiculo y servicio en fecha actual
 	public TarifaEntidad consultarTarifaVigente(final UUID tipoVehiculoId, final UUID servicioId) {
-		final String sql = "SELECT t.id, t.valorServicio, t.fechaInicioVigenciaTarifa, t.fechaFinVigenciaTarifa, "
+		final String sql = "SELECT t.id, t.valorServicio, t.fechaInicioVigenciaTarifa, t.fechaFinVigenciaTarifa, t.estadoActual, "
 				+ "tv.id as tipoVehiculo_id, tv.nombreVehiculo, s.id as servicio_id, s.nombreServicio "
 				+ "FROM Tarifa t "
 				+ "INNER JOIN TipoVehiculo tv ON t.tipoVehiculo_id = tv.id "
 				+ "INNER JOIN Servicio s ON t.servicio_id = s.id "
 				+ "WHERE t.tipoVehiculo_id = ? AND t.servicio_id = ? "
-				+ "AND GETDATE() BETWEEN t.fechaInicioVigenciaTarifa AND t.fechaFinVigenciaTarifa";
+				+ "AND CAST(GETDATE() AS DATE) >= t.fechaInicioVigenciaTarifa "
+				+ "AND (t.fechaFinVigenciaTarifa IS NULL OR CAST(GETDATE() AS DATE) <= t.fechaFinVigenciaTarifa)";
 		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
 			ps.setString(1, tipoVehiculoId.toString());
 			ps.setString(2, servicioId.toString());
@@ -134,6 +173,7 @@ public class TarifaSQLServerDAO extends SQLDAO implements TarifaDAO {
 				.fechaFinVigenciaTarifa(rs.getDate("fechaFinVigenciaTarifa"))
 				.tipoVehiculo(tipoVehiculo)
 				.servicio(servicio)
+				.estadoActual(rs.getBoolean("estadoActual"))
 				.build();
 	}
 

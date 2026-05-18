@@ -73,6 +73,10 @@ public class VehiculoSQLServerDAO extends SQLDAO implements VehiculoDAO {
 				sql.append(" AND v.placaVehiculo = ?");
 				parametros.add(filtro.getPlacaVehiculo());
 			}
+			if (!UtilObjeto.esNulo(filtro.getTipoVehiculo()) && !UtilObjeto.esNulo(filtro.getTipoVehiculo().getId())) {
+				sql.append(" AND v.tipoVehiculo_id = ?");
+				parametros.add(filtro.getTipoVehiculo().getId().toString());
+			}
 		}
 
 		final List<VehiculoEntidad> resultados = new ArrayList<>();

@@ -1,6 +1,19 @@
 package co.uco.erzparking.controlador;
 
-import co.uco.erzparking.controlador.dto.Respuesta;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import co.uco.erzparking.controlador.dto.RespuestaExito;
 import co.uco.erzparking.dto.UsuarioVehiculoDTO;
 import co.uco.erzparking.negocio.fachada.usuariovehiculo.ConsultarTodosUsuarioVehiculosFachada;
 import co.uco.erzparking.negocio.fachada.usuariovehiculo.ConsultarUsuarioVehiculoPorIdFachada;
@@ -10,100 +23,43 @@ import co.uco.erzparking.negocio.fachada.usuariovehiculo.impl.ConsultarTodosUsua
 import co.uco.erzparking.negocio.fachada.usuariovehiculo.impl.ConsultarUsuarioVehiculoPorIdFachadaImpl;
 import co.uco.erzparking.negocio.fachada.usuariovehiculo.impl.QuitarUsuarioVehiculoFachadaImpl;
 import co.uco.erzparking.negocio.fachada.usuariovehiculo.impl.RegistrarUsuarioVehiculoFachadaImpl;
-import co.uco.erzparking.transversal.excepcion.ERZParkingExcepcion;
-import java.util.List;
-import java.util.UUID;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/erzparking/v1/usuariosvehiculo")
 public class UsuarioVehiculoControlador {
 
 	@PostMapping
-	public ResponseEntity<Respuesta<UsuarioVehiculoDTO>> registrar(@RequestBody UsuarioVehiculoDTO datos) {
-		Respuesta<UsuarioVehiculoDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			RegistrarUsuarioVehiculoFachada fachada = new RegistrarUsuarioVehiculoFachadaImpl();
-			fachada.ejecutar(datos);
-			respuesta.agregarMensaje("UsuarioVehiculo registrado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<String>> registrarNuevaAsociacionUsuarioVehiculo(@RequestBody UsuarioVehiculoDTO usuarioVehiculo) {
+		RegistrarUsuarioVehiculoFachada fachada = new RegistrarUsuarioVehiculoFachadaImpl();
+		fachada.ejecutar(usuarioVehiculo);
+
+		return new ResponseEntity<>(RespuestaExito.crear("La asociacion usuario-vehiculo se ha registrado exitosamente.", ""), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Respuesta<UsuarioVehiculoDTO>> quitar(@PathVariable UUID id) {
-		Respuesta<UsuarioVehiculoDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			var datos = new UsuarioVehiculoDTO.Builder().id(id).build();
-			QuitarUsuarioVehiculoFachada fachada = new QuitarUsuarioVehiculoFachadaImpl();
-			fachada.ejecutar(datos);
-			respuesta.agregarMensaje("UsuarioVehiculo eliminado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<String>> darDeBajaAsociacionUsuarioVehiculoExistente(@PathVariable UUID id) {
+		var usuarioVehiculo = new UsuarioVehiculoDTO.Builder().id(id).build();
+		QuitarUsuarioVehiculoFachada fachada = new QuitarUsuarioVehiculoFachadaImpl();
+		fachada.ejecutar(usuarioVehiculo);
+
+		return new ResponseEntity<>(RespuestaExito.crear("La asociacion usuario-vehiculo se ha eliminado exitosamente.", ""), HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Respuesta<UsuarioVehiculoDTO>> consultarPorId(@PathVariable UUID id) {
-		Respuesta<UsuarioVehiculoDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			var datos = new UsuarioVehiculoDTO.Builder().id(id).build();
-			ConsultarUsuarioVehiculoPorIdFachada fachada = new ConsultarUsuarioVehiculoPorIdFachadaImpl();
-			var resultado = fachada.ejecutar(datos);
-			respuesta.setDatos(List.of(resultado));
-			respuesta.agregarMensaje("UsuarioVehiculo consultado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<UsuarioVehiculoDTO>> consultarAsociacionUsuarioVehiculoPorId(@PathVariable UUID id) {
+		var usuarioVehiculo = new UsuarioVehiculoDTO.Builder().id(id).build();
+		ConsultarUsuarioVehiculoPorIdFachada fachada = new ConsultarUsuarioVehiculoPorIdFachadaImpl();
+		var resultado = fachada.ejecutar(usuarioVehiculo);
+
+		return new ResponseEntity<>(RespuestaExito.crear("La asociacion usuario-vehiculo se ha consultado exitosamente.", resultado), HttpStatus.OK);
 	}
 
 	@GetMapping
-	public ResponseEntity<Respuesta<UsuarioVehiculoDTO>> consultarTodos() {
-		Respuesta<UsuarioVehiculoDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			ConsultarTodosUsuarioVehiculosFachada fachada = new ConsultarTodosUsuarioVehiculosFachadaImpl();
-			var resultados = fachada.ejecutar(new UsuarioVehiculoDTO.Builder().build());
-			respuesta.setDatos(resultados);
-			respuesta.agregarMensaje("Consulta exitosa");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<List<UsuarioVehiculoDTO>>> consultarAsociacionesUsuarioVehiculo() {
+		ConsultarTodosUsuarioVehiculosFachada fachada = new ConsultarTodosUsuarioVehiculosFachadaImpl();
+		var resultado = fachada.ejecutar(new UsuarioVehiculoDTO.Builder().build());
+
+		return new ResponseEntity<>(RespuestaExito.crear("Asociaciones usuario-vehiculo consultadas exitosamente.", resultado), HttpStatus.OK);
 	}
 
 }

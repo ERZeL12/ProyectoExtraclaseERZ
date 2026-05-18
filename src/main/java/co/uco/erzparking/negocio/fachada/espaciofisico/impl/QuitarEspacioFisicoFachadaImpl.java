@@ -1,5 +1,7 @@
 package co.uco.erzparking.negocio.fachada.espaciofisico.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
 import co.uco.erzparking.dto.EspacioFisicoDTO;
 import co.uco.erzparking.negocio.casouso.espaciofisico.QuitarEspacioFisicoCasoUso;
@@ -21,7 +23,7 @@ public class QuitarEspacioFisicoFachadaImpl implements QuitarEspacioFisicoFachad
 	@Override
 	public void ejecutar(final EspacioFisicoDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new EspacioFisicoDominio.Builder().id(datos.getId()).build();
 			casoUso.ejecutar(dominio);
 			daoFactory.confirmarTransaccion();
@@ -33,6 +35,19 @@ public class QuitarEspacioFisicoFachadaImpl implements QuitarEspacioFisicoFachad
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al procesar la solicitud", excepcion.getMessage());
 				} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var dto = new EspacioFisicoDTO.Builder()
+					.id(UUID.fromString("046a876f-ff0a-4e78-9147-78fef43b9669"))
+					.build();
+			new QuitarEspacioFisicoFachadaImpl().ejecutar(dto);
+			System.out.println("EspacioFisico eliminado exitosamente.");
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

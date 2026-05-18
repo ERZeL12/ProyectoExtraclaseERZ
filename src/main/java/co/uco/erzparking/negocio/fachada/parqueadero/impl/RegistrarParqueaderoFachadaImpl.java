@@ -21,7 +21,7 @@ public class RegistrarParqueaderoFachadaImpl implements RegistrarParqueaderoFach
 	@Override
 	public void ejecutar(final ParqueaderoDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new ParqueaderoDominio.Builder()
 					.id(datos.getId())
 					.nombreEstablecimiento(datos.getNombreEstablecimiento())

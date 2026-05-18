@@ -3,6 +3,8 @@ package co.uco.erzparking.negocio.casouso.operario.impl;
 import java.util.UUID;
 
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
+import co.uco.erzparking.entidad.EntradaEntidad;
+import co.uco.erzparking.entidad.OperarioEntidad;
 import co.uco.erzparking.negocio.casouso.operario.QuitarOperarioCasoUso;
 import co.uco.erzparking.negocio.dominio.OperarioDominio;
 import co.uco.erzparking.transversal.UtilObjeto;
@@ -21,6 +23,7 @@ public class QuitarOperarioCasoUsoImpl implements QuitarOperarioCasoUso {
 	public void ejecutar(final OperarioDominio datos) {
 		validarIntegridadDatos(datos);
 		validarExiste(datos.getId());
+		validarSinDependencias(datos.getId());
 		quitar(datos);
 	}
 
@@ -36,6 +39,14 @@ public class QuitarOperarioCasoUsoImpl implements QuitarOperarioCasoUso {
 	private void validarExiste(final UUID id) {
 		if (UtilObjeto.esNulo(daoFactory.getOperarioDAO().consultarPorId(id))) {
 			throw ERZParkingExcepcion.crear("El operario no existe en el sistema");
+		}
+	}
+
+	private void validarSinDependencias(final UUID id) {
+		var operario = new OperarioEntidad.Builder().id(id).build();
+		var entradas = daoFactory.getEntradaDAO().consultarPorFiltro(new EntradaEntidad.Builder().operario(operario).build());
+		if (!entradas.isEmpty()) {
+			throw ERZParkingExcepcion.crear("No se puede eliminar el operario porque tiene entradas registradas");
 		}
 	}
 

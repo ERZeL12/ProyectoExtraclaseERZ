@@ -33,6 +33,7 @@ public final class TarifaEntidadAssembler implements EntidadAssembler<TarifaDomi
 				.fechaFinVigenciaTarifa(tarifaAEnsamblar.getFechaFinVigenciaTarifa())
 				.tipoVehiculo(TipoVehiculoEntidadAssembler.getInstance().ensamblarEntidad(tarifaAEnsamblar.getTipoVehiculo()))
 				.servicio(ServicioEntidadAssembler.getInstance().ensamblarEntidad(tarifaAEnsamblar.getServicio()))
+				.estadoActual(tarifaAEnsamblar.isEstadoActual())
 				.build();
 	}
 
@@ -47,6 +48,7 @@ public final class TarifaEntidadAssembler implements EntidadAssembler<TarifaDomi
 				.fechaFinVigenciaTarifa(tarifaAEnsamblar.getFechaFinVigenciaTarifa())
 				.tipoVehiculo(TipoVehiculoEntidadAssembler.getInstance().ensamblarDominio(tarifaAEnsamblar.getTipoVehiculo()))
 				.servicio(ServicioEntidadAssembler.getInstance().ensamblarDominio(tarifaAEnsamblar.getServicio()))
+				.estadoActual(tarifaAEnsamblar.isEstadoActual())
 				.build();
 	}
 

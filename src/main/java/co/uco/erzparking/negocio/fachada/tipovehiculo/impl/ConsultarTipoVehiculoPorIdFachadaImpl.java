@@ -1,5 +1,7 @@
 package co.uco.erzparking.negocio.fachada.tipovehiculo.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
 import co.uco.erzparking.dto.TipoVehiculoDTO;
 import co.uco.erzparking.negocio.casouso.tipovehiculo.ConsultarTipoVehiculoPorIdCasoUso;
@@ -27,6 +29,7 @@ public class ConsultarTipoVehiculoPorIdFachadaImpl implements ConsultarTipoVehic
 			return new TipoVehiculoDTO.Builder()
 					.id(resultado.getId())
 					.nombreVehiculo(resultado.getNombreVehiculo())
+					.descripcion(resultado.getDescripcion())
 					.build();
 		} catch (ERZParkingExcepcion excepcion) {
 						throw excepcion;
@@ -34,6 +37,19 @@ public class ConsultarTipoVehiculoPorIdFachadaImpl implements ConsultarTipoVehic
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al procesar la solicitud", excepcion.getMessage());
 		} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new TipoVehiculoDTO.Builder()
+					.id(UUID.fromString("66b78346-d83d-4bf1-9346-ce04d18d8e27"))
+					.build();
+			var resultado = new ConsultarTipoVehiculoPorIdFachadaImpl().ejecutar(filtro);
+			System.out.println("TipoVehiculo consultado: id=" + resultado.getId() + ", nombre=" + resultado.getNombreVehiculo());
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

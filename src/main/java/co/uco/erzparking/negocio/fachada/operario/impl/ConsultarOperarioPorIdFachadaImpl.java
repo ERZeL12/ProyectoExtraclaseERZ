@@ -1,5 +1,7 @@
 package co.uco.erzparking.negocio.fachada.operario.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
 import co.uco.erzparking.dto.CargoDTO;
 import co.uco.erzparking.dto.OperarioDTO;
@@ -29,13 +31,22 @@ public class ConsultarOperarioPorIdFachadaImpl implements ConsultarOperarioPorId
 			var tipoDocumentoIdentificacionDTO = resultado.getTipoDocumentoIdentificacion() != null
 					? new TipoDocumentoIdentificacionDTO.Builder()
 							.id(resultado.getTipoDocumentoIdentificacion().getId())
+							.nombreDocumentoIdentificacion(resultado.getTipoDocumentoIdentificacion().getNombreDocumentoIdentificacion())
+							.descripcion(resultado.getTipoDocumentoIdentificacion().getDescripcion())
 							.build()
 					: null;
 			var cargoDTO = resultado.getCargo() != null
-					? new CargoDTO.Builder().id(resultado.getCargo().getId()).build()
+					? new CargoDTO.Builder()
+							.id(resultado.getCargo().getId())
+							.nombreCargo(resultado.getCargo().getNombreCargo())
+							.descripcion(resultado.getCargo().getDescripcion())
+							.build()
 					: null;
 			var parqueaderoDTO = resultado.getParqueadero() != null
-					? new ParqueaderoDTO.Builder().id(resultado.getParqueadero().getId()).build()
+					? new ParqueaderoDTO.Builder()
+							.id(resultado.getParqueadero().getId())
+							.nombreEstablecimiento(resultado.getParqueadero().getNombreEstablecimiento())
+							.build()
 					: null;
 			return new OperarioDTO.Builder()
 					.id(resultado.getId())
@@ -55,6 +66,21 @@ public class ConsultarOperarioPorIdFachadaImpl implements ConsultarOperarioPorId
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al consultar el operario", excepcion.getMessage());
 		} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new OperarioDTO.Builder()
+					.id(UUID.fromString("4318b80c-b391-490c-a49e-e94dc3efd7c0"))
+					.build();
+			var resultado = new ConsultarOperarioPorIdFachadaImpl().ejecutar(filtro);
+			System.out.println("Operario consultado: id=" + resultado.getId()
+					+ ", nombres=" + resultado.getPrimerNombre() + " " + resultado.getPrimerApellido()
+					+ ", identificacion=" + resultado.getNumeroIdentificacion());
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

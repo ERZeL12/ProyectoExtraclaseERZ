@@ -43,4 +43,16 @@ public class ConsultarTodosTipoDocumentoIdentificacionsFachadaImpl implements Co
 				.build();
 	}
 
+	public static void main(final String[] args) {
+		try {
+			var filtro = new TipoDocumentoIdentificacionDTO.Builder().build();
+			var resultado = new ConsultarTodosTipoDocumentoIdentificacionsFachadaImpl().ejecutar(filtro);
+			System.out.println("Total tipos documento encontrados: " + resultado.size());
+			resultado.forEach(t -> System.out.println(" - " + t.getId() + " | " + t.getNombreDocumentoIdentificacion()));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
 }

@@ -21,7 +21,7 @@ public class RegistrarPaisFachadaImpl implements RegistrarPaisFachada {
 	@Override
 	public void ejecutar(final PaisDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new PaisDominio.Builder()
 			        .id(datos.getId())
 			        .nombre(datos.getNombre())

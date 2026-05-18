@@ -1,5 +1,7 @@
 package co.uco.erzparking.negocio.fachada.servicio.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
 import co.uco.erzparking.dto.ParqueaderoDTO;
 import co.uco.erzparking.dto.ServicioDTO;
@@ -30,10 +32,14 @@ public class ConsultarServicioPorIdFachadaImpl implements ConsultarServicioPorId
 					? new TipoServicioDTO.Builder()
 							.id(resultado.getTipoServicio().getId())
 							.nombreServicio(resultado.getTipoServicio().getNombreServicio())
+							.descripcion(resultado.getTipoServicio().getDescripcion())
 							.build()
 					: null;
 			var parqueaderoDTO = resultado.getParqueadero() != null
-					? new ParqueaderoDTO.Builder().id(resultado.getParqueadero().getId()).build()
+					? new ParqueaderoDTO.Builder()
+							.id(resultado.getParqueadero().getId())
+							.nombreEstablecimiento(resultado.getParqueadero().getNombreEstablecimiento())
+							.build()
 					: null;
 				return new ServicioDTO.Builder()
 					.id(resultado.getId())
@@ -47,6 +53,21 @@ public class ConsultarServicioPorIdFachadaImpl implements ConsultarServicioPorId
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al procesar la solicitud", excepcion.getMessage());
 		} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new ServicioDTO.Builder()
+					.id(UUID.fromString("54d2035f-120c-47e4-a54d-06b149349c11"))
+					.build();
+			var resultado = new ConsultarServicioPorIdFachadaImpl().ejecutar(filtro);
+			System.out.println("Servicio consultado: id=" + resultado.getId()
+					+ ", nombre=" + resultado.getNombreServicio()
+					+ ", tipoServicio=" + (resultado.getTipoServicio() != null ? resultado.getTipoServicio().getNombreServicio() : "(sin tipo)"));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

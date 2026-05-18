@@ -35,7 +35,7 @@ public class VehiculoEntidad {
 	}
 
 	private void setPlacaVehiculo(final String placaVehiculo) {
-		this.placaVehiculo = UtilTexto.aplicarTrim(placaVehiculo);
+		this.placaVehiculo = UtilTexto.eliminarEspaciosInternos(placaVehiculo);
 	}
 
 	private void setTipoVehiculo(final TipoVehiculoEntidad tipoVehiculo) {
@@ -54,7 +54,7 @@ public class VehiculoEntidad {
 		}
 
 		public Builder placaVehiculo(final String placaVehiculo) {
-			this.placaVehiculo = UtilTexto.aplicarTrim(placaVehiculo);
+			this.placaVehiculo = UtilTexto.eliminarEspaciosInternos(placaVehiculo);
 			return this;
 		}
 

@@ -26,7 +26,7 @@ public class OperarioSQLServerDAO extends SQLDAO implements OperarioDAO {
 
 	@Override
 	public void crear(final OperarioEntidad entidad) {
-		final String sql = "INSERT INTO Operario (id, tipoDocumentoIdentificacion_id, numeroIdentificacion, primerNombre, segundoNombre, primerApellido, segundoApellido, numeroTelefonico, cargo_id, parqueadero_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		final String sql = "INSERT INTO Operario (id, tipoDocumentoIdentificacion_id, numeroIdentificacion, primerNombre, segundoNombre, primerApellido, segundoApellido, numeroTelefonico, cargo_id, parqueadero_id, estadoActual) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
 			ps.setString(1, entidad.getId().toString());
 			ps.setString(2, entidad.getTipoDocumentoIdentificacion().getId().toString());
@@ -38,6 +38,7 @@ public class OperarioSQLServerDAO extends SQLDAO implements OperarioDAO {
 			ps.setLong(8, entidad.getNumeroTelefonico());
 			ps.setString(9, entidad.getCargo().getId().toString());
 			ps.setString(10, entidad.getParqueadero().getId().toString());
+			ps.setBoolean(11, entidad.isEstadoActual());
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw ERZParkingExcepcion.crear(e, "Error al registrar el operario", "SQLException al insertar en tabla Operario: " + e.getMessage());
@@ -46,7 +47,7 @@ public class OperarioSQLServerDAO extends SQLDAO implements OperarioDAO {
 
 	@Override
 	public void actualizar(final UUID id, final OperarioEntidad entidad) {
-		final String sql = "UPDATE Operario SET primerNombre = ?, segundoNombre = ?, primerApellido = ?, segundoApellido = ?, numeroTelefonico = ?, cargo_id = ? WHERE id = ?";
+		final String sql = "UPDATE Operario SET primerNombre = ?, segundoNombre = ?, primerApellido = ?, segundoApellido = ?, numeroTelefonico = ?, cargo_id = ?, estadoActual = ? WHERE id = ?";
 		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
 			ps.setString(1, entidad.getPrimerNombre());
 			ps.setString(2, entidad.getSegundoNombre());
@@ -54,10 +55,23 @@ public class OperarioSQLServerDAO extends SQLDAO implements OperarioDAO {
 			ps.setString(4, entidad.getSegundoApellido());
 			ps.setLong(5, entidad.getNumeroTelefonico());
 			ps.setString(6, entidad.getCargo().getId().toString());
-			ps.setString(7, id.toString());
+			ps.setBoolean(7, entidad.isEstadoActual());
+			ps.setString(8, id.toString());
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw ERZParkingExcepcion.crear(e, "Error al actualizar el operario", "SQLException al actualizar tabla Operario: " + e.getMessage());
+		}
+	}
+
+	@Override
+	public void cambiarEstadoActual(final UUID id, final boolean nuevoEstado) {
+		final String sql = "UPDATE Operario SET estadoActual = ? WHERE id = ?";
+		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
+			ps.setBoolean(1, nuevoEstado);
+			ps.setString(2, id.toString());
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw ERZParkingExcepcion.crear(e, "Error al cambiar el estado del operario", "SQLException al cambiar estadoActual en tabla Operario: " + e.getMessage());
 		}
 	}
 
@@ -74,8 +88,10 @@ public class OperarioSQLServerDAO extends SQLDAO implements OperarioDAO {
 
 	@Override
 	public OperarioEntidad consultarPorId(final UUID id) {
-		final String sql = "SELECT o.id, o.numeroIdentificacion, o.primerNombre, o.segundoNombre, o.primerApellido, o.segundoApellido, o.numeroTelefonico, "
-				+ "tdi.id as tipoDoc_id, c.id as cargo_id, p.id as parqueadero_id "
+		final String sql = "SELECT o.id, o.numeroIdentificacion, o.primerNombre, o.segundoNombre, o.primerApellido, o.segundoApellido, o.numeroTelefonico, o.estadoActual,"
+				+ "tdi.id as tipoDoc_id, tdi.nombreDocumentoIdentificacion as tipoDoc_nombre, "
+				+ "c.id as cargo_id, c.nombreCargo as cargo_nombre, "
+				+ "p.id as parqueadero_id, p.nombreEstablecimiento as parqueadero_nombre "
 				+ "FROM Operario o "
 				+ "INNER JOIN TipoDocumentoIdentificacion tdi ON o.tipoDocumentoIdentificacion_id = tdi.id "
 				+ "INNER JOIN Cargo c ON o.cargo_id = c.id "
@@ -102,8 +118,10 @@ public class OperarioSQLServerDAO extends SQLDAO implements OperarioDAO {
 	@Override
 	public List<OperarioEntidad> consultarPorFiltro(final OperarioEntidad filtro) {
 		final StringBuilder sql = new StringBuilder(
-				"SELECT o.id, o.numeroIdentificacion, o.primerNombre, o.segundoNombre, o.primerApellido, o.segundoApellido, o.numeroTelefonico, "
-				+ "tdi.id as tipoDoc_id, c.id as cargo_id, p.id as parqueadero_id "
+				"SELECT o.id, o.numeroIdentificacion, o.primerNombre, o.segundoNombre, o.primerApellido, o.segundoApellido, o.numeroTelefonico, o.estadoActual,"
+				+ "tdi.id as tipoDoc_id, tdi.nombreDocumentoIdentificacion as tipoDoc_nombre, "
+				+ "c.id as cargo_id, c.nombreCargo as cargo_nombre, "
+				+ "p.id as parqueadero_id, p.nombreEstablecimiento as parqueadero_nombre "
 				+ "FROM Operario o "
 				+ "INNER JOIN TipoDocumentoIdentificacion tdi ON o.tipoDocumentoIdentificacion_id = tdi.id "
 				+ "INNER JOIN Cargo c ON o.cargo_id = c.id "
@@ -115,6 +133,18 @@ public class OperarioSQLServerDAO extends SQLDAO implements OperarioDAO {
 			if (!UtilTexto.esNula(filtro.getNumeroIdentificacion()) && !filtro.getNumeroIdentificacion().isEmpty()) {
 				sql.append(" AND o.numeroIdentificacion = ?");
 				parametros.add(filtro.getNumeroIdentificacion());
+			}
+			if (!UtilObjeto.esNulo(filtro.getCargo()) && !UtilObjeto.esNulo(filtro.getCargo().getId())) {
+				sql.append(" AND o.cargo_id = ?");
+				parametros.add(filtro.getCargo().getId().toString());
+			}
+			if (!UtilObjeto.esNulo(filtro.getParqueadero()) && !UtilObjeto.esNulo(filtro.getParqueadero().getId())) {
+				sql.append(" AND o.parqueadero_id = ?");
+				parametros.add(filtro.getParqueadero().getId().toString());
+			}
+			if (!UtilObjeto.esNulo(filtro.getTipoDocumentoIdentificacion()) && !UtilObjeto.esNulo(filtro.getTipoDocumentoIdentificacion().getId())) {
+				sql.append(" AND o.tipoDocumentoIdentificacion_id = ?");
+				parametros.add(filtro.getTipoDocumentoIdentificacion().getId().toString());
 			}
 		}
 
@@ -134,15 +164,42 @@ public class OperarioSQLServerDAO extends SQLDAO implements OperarioDAO {
 		return resultados;
 	}
 
+	@Override
+	public OperarioEntidad consultarPorNumeroIdentificacion(final String numeroIdentificacion) {
+		final String sql = "SELECT o.id, o.numeroIdentificacion, o.primerNombre, o.segundoNombre, o.primerApellido, o.segundoApellido, o.numeroTelefonico, o.estadoActual, "
+				+ "tdi.id as tipoDoc_id, tdi.nombreDocumentoIdentificacion as tipoDoc_nombre, "
+				+ "c.id as cargo_id, c.nombreCargo as cargo_nombre, "
+				+ "p.id as parqueadero_id, p.nombreEstablecimiento as parqueadero_nombre "
+				+ "FROM Operario o "
+				+ "INNER JOIN TipoDocumentoIdentificacion tdi ON o.tipoDocumentoIdentificacion_id = tdi.id "
+				+ "INNER JOIN Cargo c ON o.cargo_id = c.id "
+				+ "INNER JOIN Parqueadero p ON o.parqueadero_id = p.id "
+				+ "WHERE o.numeroIdentificacion = ?";
+		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
+			ps.setString(1, numeroIdentificacion);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					return construirOperarioEntidad(rs);
+				}
+			}
+		} catch (SQLException e) {
+			throw ERZParkingExcepcion.crear(e, "Error al consultar el operario por numero de identificacion", "SQLException al consultar tabla Operario por numeroIdentificacion: " + e.getMessage());
+		}
+		return null;
+	}
+
 	private OperarioEntidad construirOperarioEntidad(final ResultSet rs) throws SQLException {
 		var tipoDoc = new TipoDocumentoIdentificacionEntidad.Builder()
 				.id(UUID.fromString(rs.getString("tipoDoc_id")))
+				.nombreDocumentoIdentificacion(rs.getString("tipoDoc_nombre"))
 				.build();
 		var cargo = new CargoEntidad.Builder()
 				.id(UUID.fromString(rs.getString("cargo_id")))
+				.nombreCargo(rs.getString("cargo_nombre"))
 				.build();
 		var parqueadero = new ParqueaderoEntidad.Builder()
 				.id(UUID.fromString(rs.getString("parqueadero_id")))
+				.nombreEstablecimiento(rs.getString("parqueadero_nombre"))
 				.build();
 		return new OperarioEntidad.Builder()
 				.id(UUID.fromString(rs.getString("id")))
@@ -155,6 +212,7 @@ public class OperarioSQLServerDAO extends SQLDAO implements OperarioDAO {
 				.numeroTelefonico(rs.getLong("numeroTelefonico"))
 				.cargo(cargo)
 				.parqueadero(parqueadero)
+				.estadoActual(rs.getBoolean("estadoActual"))
 				.build();
 	}
 

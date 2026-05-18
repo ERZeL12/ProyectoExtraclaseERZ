@@ -38,7 +38,10 @@ public class ConsultarTodosParqueaderosFachadaImpl implements ConsultarTodosParq
 
 	private ParqueaderoDTO mapearADto(final ParqueaderoDominio d) {
 		var ciudadDTO = d.getCiudad() != null
-				? new CiudadDTO.Builder().id(d.getCiudad().getId()).build()
+				? new CiudadDTO.Builder()
+						.id(d.getCiudad().getId())
+						.nombre(d.getCiudad().getNombre())
+						.build()
 				: null;
 		return new ParqueaderoDTO.Builder()
 				.id(d.getId())
@@ -48,6 +51,18 @@ public class ConsultarTodosParqueaderosFachadaImpl implements ConsultarTodosParq
 				.direccionEstablecimiento(d.getDireccionEstablecimiento())
 				.ciudad(ciudadDTO)
 				.build();
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new ParqueaderoDTO.Builder().build();
+			var resultado = new ConsultarTodosParqueaderosFachadaImpl().ejecutar(filtro);
+			System.out.println("Total parqueaderos encontrados: " + resultado.size());
+			resultado.forEach(p -> System.out.println(" - " + p.getId() + " | " + p.getNombreEstablecimiento()));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 }

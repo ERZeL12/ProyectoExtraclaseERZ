@@ -33,6 +33,7 @@ public final class ContratoMensualidadEntidadAssembler implements EntidadAssembl
 				.tarifa(TarifaEntidadAssembler.getInstance().ensamblarEntidad(contratoMensualidadAEnsamblar.getTarifa()))
 				.usuarioVehiculo(UsuarioVehiculoEntidadAssembler.getInstance().ensamblarEntidad(contratoMensualidadAEnsamblar.getUsuarioVehiculo()))
 				.espacioFisico(EspacioFisicoEntidadAssembler.getInstance().ensamblarEntidad(contratoMensualidadAEnsamblar.getEspacioFisico()))
+				.estadoActual(contratoMensualidadAEnsamblar.isEstadoActual())
 				.build();
 	}
 
@@ -47,6 +48,7 @@ public final class ContratoMensualidadEntidadAssembler implements EntidadAssembl
 				.tarifa(TarifaEntidadAssembler.getInstance().ensamblarDominio(contratoMensualidadAEnsamblar.getTarifa()))
 				.usuarioVehiculo(UsuarioVehiculoEntidadAssembler.getInstance().ensamblarDominio(contratoMensualidadAEnsamblar.getUsuarioVehiculo()))
 				.espacioFisico(EspacioFisicoEntidadAssembler.getInstance().ensamblarDominio(contratoMensualidadAEnsamblar.getEspacioFisico()))
+				.estadoActual(contratoMensualidadAEnsamblar.isEstadoActual())
 				.build();
 	}
 

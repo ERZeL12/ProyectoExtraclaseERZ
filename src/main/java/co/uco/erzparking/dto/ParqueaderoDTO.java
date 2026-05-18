@@ -15,6 +15,15 @@ public class ParqueaderoDTO {
 	private String direccionEstablecimiento;
 	private CiudadDTO ciudad;
 
+	public ParqueaderoDTO() {
+		setId(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+		setNombreEstablecimiento("");
+		setNumeroTelefonico(0L);
+		setCorreoElectronico("");
+		setDireccionEstablecimiento("");
+		setCiudad(new CiudadDTO());
+	}
+
 	private ParqueaderoDTO(final Builder builder) {
 		setId(builder.id);
 		setNombreEstablecimiento(builder.nombreEstablecimiento);
@@ -61,11 +70,11 @@ public class ParqueaderoDTO {
 	}
 
 	private void setCorreoElectronico(final String correoElectronico) {
-		this.correoElectronico = UtilTexto.aplicarTrim(correoElectronico);
+		this.correoElectronico = UtilTexto.eliminarEspaciosInternos(correoElectronico);
 	}
 
 	private void setDireccionEstablecimiento(final String direccionEstablecimiento) {
-		this.direccionEstablecimiento = UtilTexto.aplicarTrim(direccionEstablecimiento);
+		this.direccionEstablecimiento = UtilTexto.colapsarEspaciosInternos(direccionEstablecimiento);
 	}
 
 	private void setCiudad(final CiudadDTO ciudad) {
@@ -97,12 +106,12 @@ public class ParqueaderoDTO {
 		}
 
 		public Builder correoElectronico(final String correoElectronico) {
-			this.correoElectronico = UtilTexto.aplicarTrim(correoElectronico);
+			this.correoElectronico = UtilTexto.eliminarEspaciosInternos(correoElectronico);
 			return this;
 		}
 
 		public Builder direccionEstablecimiento(final String direccionEstablecimiento) {
-			this.direccionEstablecimiento = UtilTexto.aplicarTrim(direccionEstablecimiento);
+			this.direccionEstablecimiento = UtilTexto.colapsarEspaciosInternos(direccionEstablecimiento);
 			return this;
 		}
 

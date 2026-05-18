@@ -11,6 +11,12 @@ public class UsuarioVehiculoDTO {
 	private UsuarioDTO usuario;
 	private VehiculoDTO vehiculo;
 
+	public UsuarioVehiculoDTO() {
+		setId(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+		setUsuario(new UsuarioDTO());
+		setVehiculo(new VehiculoDTO());
+	}
+
 	private UsuarioVehiculoDTO(final Builder builder) {
 		setId(builder.id);
 		setUsuario(builder.usuario);

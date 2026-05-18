@@ -22,12 +22,25 @@ public class RegistrarUsuarioCasoUsoImpl implements RegistrarUsuarioCasoUso {
 	@Override
 	public void ejecutar(final UsuarioDominio datos) {
 		validarIntegridadDatos(datos);
+		validarDependencias(datos);
 		guardar(datos);
 	}
 
 	private void validarIntegridadDatos(final UsuarioDominio datos) {
 		if (UtilObjeto.esNulo(datos)) {
 			throw ERZParkingExcepcion.crear("Los datos del usuario son obligatorios");
+		}
+		if (UtilObjeto.esNulo(datos.getNumeroIdentificacion()) || datos.getNumeroIdentificacion().isEmpty()) {
+			throw ERZParkingExcepcion.crear("El numero de identificacion del usuario es obligatorio");
+		}
+	}
+
+	private void validarDependencias(final UsuarioDominio datos) {
+		if (!UtilObjeto.esNulo(daoFactory.getOperarioDAO().consultarPorNumeroIdentificacion(datos.getNumeroIdentificacion()))) {
+			throw ERZParkingExcepcion.crear("El numero de identificacion ya esta registrado como operario en el sistema");
+		}
+		if (!UtilObjeto.esNulo(daoFactory.getUsuarioDAO().consultarPorNumeroIdentificacion(datos.getNumeroIdentificacion()))) {
+			throw ERZParkingExcepcion.crear("El numero de identificacion ya esta registrado como usuario en el sistema");
 		}
 	}
 

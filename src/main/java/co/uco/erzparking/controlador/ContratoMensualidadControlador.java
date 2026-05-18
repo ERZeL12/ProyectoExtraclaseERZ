@@ -1,109 +1,88 @@
 package co.uco.erzparking.controlador;
 
-import co.uco.erzparking.controlador.dto.Respuesta;
-import co.uco.erzparking.dto.ContratoMensualidadDTO;
-import co.uco.erzparking.negocio.fachada.contratomensualidad.ConsultarContratoMensualidadPorIdFachada;
-import co.uco.erzparking.negocio.fachada.contratomensualidad.ConsultarTodosContratoMensualidadsFachada;
-import co.uco.erzparking.negocio.fachada.contratomensualidad.FinalizarContratoMensualidadFachada;
-import co.uco.erzparking.negocio.fachada.contratomensualidad.RegistrarContratoMensualidadFachada;
-import co.uco.erzparking.negocio.fachada.contratomensualidad.impl.ConsultarContratoMensualidadPorIdFachadaImpl;
-import co.uco.erzparking.negocio.fachada.contratomensualidad.impl.ConsultarTodosContratoMensualidadsFachadaImpl;
-import co.uco.erzparking.negocio.fachada.contratomensualidad.impl.FinalizarContratoMensualidadFachadaImpl;
-import co.uco.erzparking.negocio.fachada.contratomensualidad.impl.RegistrarContratoMensualidadFachadaImpl;
-import co.uco.erzparking.transversal.excepcion.ERZParkingExcepcion;
 import java.util.List;
 import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import co.uco.erzparking.controlador.dto.RespuestaExito;
+import co.uco.erzparking.dto.ContratoMensualidadDTO;
+import co.uco.erzparking.negocio.fachada.contratomensualidad.ActivarContratoMensualidadFachada;
+import co.uco.erzparking.negocio.fachada.contratomensualidad.ConsultarContratoMensualidadPorIdFachada;
+import co.uco.erzparking.negocio.fachada.contratomensualidad.ConsultarTodosContratoMensualidadsFachada;
+import co.uco.erzparking.negocio.fachada.contratomensualidad.DesactivarContratoMensualidadFachada;
+import co.uco.erzparking.negocio.fachada.contratomensualidad.FinalizarContratoMensualidadFachada;
+import co.uco.erzparking.negocio.fachada.contratomensualidad.RegistrarContratoMensualidadFachada;
+import co.uco.erzparking.negocio.fachada.contratomensualidad.impl.ActivarContratoMensualidadFachadaImpl;
+import co.uco.erzparking.negocio.fachada.contratomensualidad.impl.ConsultarContratoMensualidadPorIdFachadaImpl;
+import co.uco.erzparking.negocio.fachada.contratomensualidad.impl.ConsultarTodosContratoMensualidadsFachadaImpl;
+import co.uco.erzparking.negocio.fachada.contratomensualidad.impl.DesactivarContratoMensualidadFachadaImpl;
+import co.uco.erzparking.negocio.fachada.contratomensualidad.impl.FinalizarContratoMensualidadFachadaImpl;
+import co.uco.erzparking.negocio.fachada.contratomensualidad.impl.RegistrarContratoMensualidadFachadaImpl;
 
 @RestController
 @RequestMapping("/erzparking/v1/contratosmensualidad")
 public class ContratoMensualidadControlador {
 
 	@PostMapping
-	public ResponseEntity<Respuesta<ContratoMensualidadDTO>> registrar(@RequestBody ContratoMensualidadDTO datos) {
-		Respuesta<ContratoMensualidadDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			RegistrarContratoMensualidadFachada fachada = new RegistrarContratoMensualidadFachadaImpl();
-			fachada.ejecutar(datos);
-			respuesta.agregarMensaje("ContratoMensualidad registrado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<String>> registrarNuevoContratoMensualidad(@RequestBody ContratoMensualidadDTO contrato) {
+		RegistrarContratoMensualidadFachada fachada = new RegistrarContratoMensualidadFachadaImpl();
+		fachada.ejecutar(contrato);
+
+		return new ResponseEntity<>(RespuestaExito.crear("El contrato de mensualidad se ha registrado exitosamente.", ""), HttpStatus.OK);
 	}
 
 	@PutMapping("/finalizar/{id}")
-	public ResponseEntity<Respuesta<ContratoMensualidadDTO>> finalizar(@PathVariable UUID id) {
-		Respuesta<ContratoMensualidadDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			var datos = new ContratoMensualidadDTO.Builder().id(id).build();
-			FinalizarContratoMensualidadFachada fachada = new FinalizarContratoMensualidadFachadaImpl();
-			fachada.ejecutar(datos);
-			respuesta.agregarMensaje("ContratoMensualidad finalizado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<String>> finalizarContratoMensualidadExistente(@PathVariable UUID id) {
+		var contrato = new ContratoMensualidadDTO.Builder().id(id).build();
+		FinalizarContratoMensualidadFachada fachada = new FinalizarContratoMensualidadFachadaImpl();
+		fachada.ejecutar(contrato);
+
+		return new ResponseEntity<>(RespuestaExito.crear("El contrato de mensualidad se ha finalizado exitosamente.", ""), HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Respuesta<ContratoMensualidadDTO>> consultarPorId(@PathVariable UUID id) {
-		Respuesta<ContratoMensualidadDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			var datos = new ContratoMensualidadDTO.Builder().id(id).build();
-			ConsultarContratoMensualidadPorIdFachada fachada = new ConsultarContratoMensualidadPorIdFachadaImpl();
-			var resultado = fachada.ejecutar(datos);
-			respuesta.setDatos(List.of(resultado));
-			respuesta.agregarMensaje("ContratoMensualidad consultado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<ContratoMensualidadDTO>> consultarContratoMensualidadPorId(@PathVariable UUID id) {
+		var contrato = new ContratoMensualidadDTO.Builder().id(id).build();
+		ConsultarContratoMensualidadPorIdFachada fachada = new ConsultarContratoMensualidadPorIdFachadaImpl();
+		var resultado = fachada.ejecutar(contrato);
+
+		return new ResponseEntity<>(RespuestaExito.crear("El contrato de mensualidad se ha consultado exitosamente.", resultado), HttpStatus.OK);
 	}
 
 	@GetMapping
-	public ResponseEntity<Respuesta<ContratoMensualidadDTO>> consultarTodos() {
-		Respuesta<ContratoMensualidadDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			ConsultarTodosContratoMensualidadsFachada fachada = new ConsultarTodosContratoMensualidadsFachadaImpl();
-			var resultados = fachada.ejecutar(new ContratoMensualidadDTO.Builder().build());
-			respuesta.setDatos(resultados);
-			respuesta.agregarMensaje("Consulta exitosa");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<List<ContratoMensualidadDTO>>> consultarContratosMensualidad() {
+		ConsultarTodosContratoMensualidadsFachada fachada = new ConsultarTodosContratoMensualidadsFachadaImpl();
+		var resultado = fachada.ejecutar(new ContratoMensualidadDTO.Builder().build());
+
+		return new ResponseEntity<>(RespuestaExito.crear("Contratos de mensualidad consultados exitosamente.", resultado), HttpStatus.OK);
+	}
+
+	@PatchMapping("/{id}/activar")
+	public ResponseEntity<RespuestaExito<String>> activarContratoMensualidadExistente(@PathVariable UUID id) {
+		var contrato = new ContratoMensualidadDTO.Builder().id(id).build();
+		ActivarContratoMensualidadFachada fachada = new ActivarContratoMensualidadFachadaImpl();
+		fachada.ejecutar(contrato);
+
+		return new ResponseEntity<>(RespuestaExito.crear("El contrato de mensualidad se ha activado exitosamente.", ""), HttpStatus.OK);
+	}
+
+	@PatchMapping("/{id}/desactivar")
+	public ResponseEntity<RespuestaExito<String>> desactivarContratoMensualidadExistente(@PathVariable UUID id) {
+		var contrato = new ContratoMensualidadDTO.Builder().id(id).build();
+		DesactivarContratoMensualidadFachada fachada = new DesactivarContratoMensualidadFachadaImpl();
+		fachada.ejecutar(contrato);
+
+		return new ResponseEntity<>(RespuestaExito.crear("El contrato de mensualidad se ha desactivado exitosamente.", ""), HttpStatus.OK);
 	}
 
 }

@@ -30,7 +30,7 @@ public class RegistrarContratoMensualidadFachadaImpl implements RegistrarContrat
 	@Override
 	public void ejecutar(final ContratoMensualidadDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new ContratoMensualidadDominio.Builder()
 					.id(datos.getId())
 					.fechaInicioContrato(datos.getFechaInicioContrato())
@@ -70,13 +70,13 @@ public class RegistrarContratoMensualidadFachadaImpl implements RegistrarContrat
 					.fechaInicioContrato(inicio)
 					.fechaFinContrato(fin)
 					.tarifa(new TarifaDTO.Builder()
-							.id(UUID.fromString("UUID_DE_TARIFA"))
+							.id(UUID.fromString("2addbabd-1197-48f7-9bec-4b967b51be9c"))
 							.build())
 					.usuarioVehiculo(new UsuarioVehiculoDTO.Builder()
-							.id(UUID.fromString("UUID_DE_USUARIOVEHICULO"))
+							.id(UUID.fromString("994b5b9b-d1f7-4a85-9659-73ae07c355a3"))
 							.build())
 					.espacioFisico(new EspacioFisicoDTO.Builder()
-							.id(UUID.fromString("UUID_DE_ESPACIOFISICO"))
+							.id(UUID.fromString("046a876f-ff0a-4e78-9147-78fef43b9669"))
 							.build())
 					.build();
 			new RegistrarContratoMensualidadFachadaImpl().ejecutar(dto);

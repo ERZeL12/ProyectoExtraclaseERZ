@@ -10,4 +10,6 @@ import co.uco.erzparking.entidad.UsuarioEntidad;
 
 public interface UsuarioDAO extends CrearDAO<UsuarioEntidad>, ActualizarDAO<UsuarioEntidad>, EliminarDAO, ConsultarPorIdDAO<UsuarioEntidad>, ConsultarTodosDAO<UsuarioEntidad>, ConsultarPorFiltroDAO<UsuarioEntidad> {
 
+	UsuarioEntidad consultarPorNumeroIdentificacion(String numeroIdentificacion);
+
 }

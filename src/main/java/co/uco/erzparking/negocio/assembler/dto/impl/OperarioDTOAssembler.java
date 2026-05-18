@@ -35,6 +35,7 @@ public final class OperarioDTOAssembler implements DTOAssembler<OperarioDominio,
 				.numeroTelefonico(operarioAEnsamblar.getNumeroTelefonico())
 				.cargo(CargoDTOAssembler.getInstance().ensamblarDominio(operarioAEnsamblar.getCargo()))
 				.parqueadero(ParqueaderoDTOAssembler.getInstance().ensamblarDominio(operarioAEnsamblar.getParqueadero()))
+				.estadoActual(operarioAEnsamblar.isEstadoActual())
 				.build();
 	}
 
@@ -52,6 +53,7 @@ public final class OperarioDTOAssembler implements DTOAssembler<OperarioDominio,
 				.numeroTelefonico(operarioAEnsamblar.getNumeroTelefonico())
 				.cargo(CargoDTOAssembler.getInstance().ensamblarDTO(operarioAEnsamblar.getCargo()))
 				.parqueadero(ParqueaderoDTOAssembler.getInstance().ensamblarDTO(operarioAEnsamblar.getParqueadero()))
+				.estadoActual(operarioAEnsamblar.isEstadoActual())
 				.build();
 	}
 

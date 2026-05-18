@@ -81,7 +81,7 @@ public class UsuarioEntidad {
 	}
 
 	private void setNumeroIdentificacion(final String numeroIdentificacion) {
-		this.numeroIdentificacion = UtilTexto.aplicarTrim(numeroIdentificacion);
+		this.numeroIdentificacion = UtilTexto.eliminarEspaciosInternos(numeroIdentificacion);
 	}
 
 	private void setPrimerNombre(final String primerNombre) {
@@ -105,7 +105,7 @@ public class UsuarioEntidad {
 	}
 
 	private void setCorreoElectronico(final String correoElectronico) {
-		this.correoElectronico = UtilTexto.aplicarTrim(correoElectronico);
+		this.correoElectronico = UtilTexto.eliminarEspaciosInternos(correoElectronico);
 	}
 
 	private void setCiudad(final CiudadEntidad ciudad) {
@@ -136,7 +136,7 @@ public class UsuarioEntidad {
 		}
 
 		public Builder numeroIdentificacion(final String numeroIdentificacion) {
-			this.numeroIdentificacion = UtilTexto.aplicarTrim(numeroIdentificacion);
+			this.numeroIdentificacion = UtilTexto.eliminarEspaciosInternos(numeroIdentificacion);
 			return this;
 		}
 
@@ -166,7 +166,7 @@ public class UsuarioEntidad {
 		}
 
 		public Builder correoElectronico(final String correoElectronico) {
-			this.correoElectronico = UtilTexto.aplicarTrim(correoElectronico);
+			this.correoElectronico = UtilTexto.eliminarEspaciosInternos(correoElectronico);
 			return this;
 		}
 

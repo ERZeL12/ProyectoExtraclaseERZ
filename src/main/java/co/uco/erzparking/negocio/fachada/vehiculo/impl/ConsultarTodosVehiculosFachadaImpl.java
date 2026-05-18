@@ -41,6 +41,7 @@ public class ConsultarTodosVehiculosFachadaImpl implements ConsultarTodosVehicul
 				? new TipoVehiculoDTO.Builder()
 						.id(d.getTipoVehiculo().getId())
 						.nombreVehiculo(d.getTipoVehiculo().getNombreVehiculo())
+						.descripcion(d.getTipoVehiculo().getDescripcion())
 						.build()
 				: null;
 		return new VehiculoDTO.Builder()
@@ -48,6 +49,18 @@ public class ConsultarTodosVehiculosFachadaImpl implements ConsultarTodosVehicul
 				.placaVehiculo(d.getPlacaVehiculo())
 				.tipoVehiculo(tipoVehiculoDTO)
 				.build();
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new VehiculoDTO.Builder().build();
+			var resultado = new ConsultarTodosVehiculosFachadaImpl().ejecutar(filtro);
+			System.out.println("Total vehiculos encontrados: " + resultado.size());
+			resultado.forEach(v -> System.out.println(" - " + v.getId() + " | placa=" + v.getPlacaVehiculo()));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 }

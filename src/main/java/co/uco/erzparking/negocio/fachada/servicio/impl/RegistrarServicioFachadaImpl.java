@@ -27,7 +27,7 @@ public class RegistrarServicioFachadaImpl implements RegistrarServicioFachada {
 	@Override
 	public void ejecutar(final ServicioDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new ServicioDominio.Builder()
 					.id(datos.getId())
 					.nombreServicio(datos.getNombreServicio())
@@ -54,12 +54,12 @@ public class RegistrarServicioFachadaImpl implements RegistrarServicioFachada {
 	public static void main(final String[] args) {
 		try {
 			var dto = new ServicioDTO.Builder()
-					.nombreServicio("Parqueo VIP")
+					.nombreServicio("Parqueo")
 					.tipoServicio(new TipoServicioDTO.Builder()
-							.id(UUID.fromString("UUID_DE_TIPOSERVICIO"))
+							.id(UUID.fromString("625a474a-1f5a-4590-860f-9635d49a9a23"))
 							.build())
 					.parqueadero(new ParqueaderoDTO.Builder()
-							.id(UUID.fromString("UUID_DE_PARQUEADERO"))
+							.id(UUID.fromString("6f34728b-d0ee-4440-bd24-38b29b2ed427"))
 							.build())
 					.build();
 			new RegistrarServicioFachadaImpl().ejecutar(dto);

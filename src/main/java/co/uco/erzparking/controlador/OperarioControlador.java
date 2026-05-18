@@ -1,132 +1,112 @@
 package co.uco.erzparking.controlador;
 
-import co.uco.erzparking.controlador.dto.Respuesta;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import co.uco.erzparking.controlador.dto.RespuestaExito;
 import co.uco.erzparking.dto.OperarioDTO;
+import co.uco.erzparking.negocio.fachada.operario.ActivarOperarioFachada;
 import co.uco.erzparking.negocio.fachada.operario.ActualizarOperarioFachada;
 import co.uco.erzparking.negocio.fachada.operario.ConsultarOperarioPorIdFachada;
 import co.uco.erzparking.negocio.fachada.operario.ConsultarTodosOperariosFachada;
+import co.uco.erzparking.negocio.fachada.operario.DesactivarOperarioFachada;
 import co.uco.erzparking.negocio.fachada.operario.QuitarOperarioFachada;
 import co.uco.erzparking.negocio.fachada.operario.RegistrarOperarioFachada;
+import co.uco.erzparking.negocio.fachada.operario.impl.ActivarOperarioFachadaImpl;
 import co.uco.erzparking.negocio.fachada.operario.impl.ActualizarOperarioFachadaImpl;
 import co.uco.erzparking.negocio.fachada.operario.impl.ConsultarOperarioPorIdFachadaImpl;
 import co.uco.erzparking.negocio.fachada.operario.impl.ConsultarTodosOperariosFachadaImpl;
+import co.uco.erzparking.negocio.fachada.operario.impl.DesactivarOperarioFachadaImpl;
 import co.uco.erzparking.negocio.fachada.operario.impl.QuitarOperarioFachadaImpl;
 import co.uco.erzparking.negocio.fachada.operario.impl.RegistrarOperarioFachadaImpl;
-import co.uco.erzparking.transversal.excepcion.ERZParkingExcepcion;
-import java.util.List;
-import java.util.UUID;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/erzparking/v1/operarios")
 public class OperarioControlador {
 
 	@PostMapping
-	public ResponseEntity<Respuesta<OperarioDTO>> registrar(@RequestBody OperarioDTO datos) {
-		Respuesta<OperarioDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			RegistrarOperarioFachada fachada = new RegistrarOperarioFachadaImpl();
-			fachada.ejecutar(datos);
-			respuesta.agregarMensaje("Operario registrado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<String>> registrarNuevoOperario(@RequestBody OperarioDTO operario) {
+		RegistrarOperarioFachada fachada = new RegistrarOperarioFachadaImpl();
+		fachada.ejecutar(operario);
+
+		return new ResponseEntity<>(RespuestaExito.crear("El operario se ha registrado exitosamente.", ""), HttpStatus.OK);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Respuesta<OperarioDTO>> actualizar(@PathVariable UUID id, @RequestBody OperarioDTO datos) {
-		Respuesta<OperarioDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			var datosConId = new OperarioDTO.Builder().id(id).build();
-			ActualizarOperarioFachada fachada = new ActualizarOperarioFachadaImpl();
-			fachada.ejecutar(datosConId);
-			respuesta.agregarMensaje("Operario actualizado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<String>> modificarInformacionOperarioExistente(@PathVariable UUID id, @RequestBody OperarioDTO operario) {
+		var operarioConId = new OperarioDTO.Builder()
+				.id(id)
+				.tipoDocumentoIdentificacion(operario.getTipoDocumentoIdentificacion())
+				.numeroIdentificacion(operario.getNumeroIdentificacion())
+				.primerNombre(operario.getPrimerNombre())
+				.segundoNombre(operario.getSegundoNombre())
+				.primerApellido(operario.getPrimerApellido())
+				.segundoApellido(operario.getSegundoApellido())
+				.numeroTelefonico(operario.getNumeroTelefonico())
+				.cargo(operario.getCargo())
+				.parqueadero(operario.getParqueadero())
+				.build();
+
+		ActualizarOperarioFachada fachada = new ActualizarOperarioFachadaImpl();
+		fachada.ejecutar(operarioConId);
+
+		return new ResponseEntity<>(RespuestaExito.crear("El operario se ha actualizado exitosamente.", ""), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Respuesta<OperarioDTO>> quitar(@PathVariable UUID id) {
-		Respuesta<OperarioDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			var datos = new OperarioDTO.Builder().id(id).build();
-			QuitarOperarioFachada fachada = new QuitarOperarioFachadaImpl();
-			fachada.ejecutar(datos);
-			respuesta.agregarMensaje("Operario eliminado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<String>> darDeBajaOperarioExistente(@PathVariable UUID id) {
+		var operario = new OperarioDTO.Builder().id(id).build();
+		QuitarOperarioFachada fachada = new QuitarOperarioFachadaImpl();
+		fachada.ejecutar(operario);
+
+		return new ResponseEntity<>(RespuestaExito.crear("El operario se ha eliminado exitosamente.", ""), HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Respuesta<OperarioDTO>> consultarPorId(@PathVariable UUID id) {
-		Respuesta<OperarioDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			var datos = new OperarioDTO.Builder().id(id).build();
-			ConsultarOperarioPorIdFachada fachada = new ConsultarOperarioPorIdFachadaImpl();
-			var resultado = fachada.ejecutar(datos);
-			respuesta.setDatos(List.of(resultado));
-			respuesta.agregarMensaje("Operario consultado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<OperarioDTO>> consultarOperarioPorId(@PathVariable UUID id) {
+		var operario = new OperarioDTO.Builder().id(id).build();
+		ConsultarOperarioPorIdFachada fachada = new ConsultarOperarioPorIdFachadaImpl();
+		var resultado = fachada.ejecutar(operario);
+
+		return new ResponseEntity<>(RespuestaExito.crear("El operario se ha consultado exitosamente.", resultado), HttpStatus.OK);
 	}
 
 	@GetMapping
-	public ResponseEntity<Respuesta<OperarioDTO>> consultarTodos() {
-		Respuesta<OperarioDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			ConsultarTodosOperariosFachada fachada = new ConsultarTodosOperariosFachadaImpl();
-			var resultados = fachada.ejecutar(new OperarioDTO.Builder().build());
-			respuesta.setDatos(resultados);
-			respuesta.agregarMensaje("Consulta exitosa");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<List<OperarioDTO>>> consultarOperarios() {
+		ConsultarTodosOperariosFachada fachada = new ConsultarTodosOperariosFachadaImpl();
+		var resultado = fachada.ejecutar(new OperarioDTO.Builder().build());
+
+		return new ResponseEntity<>(RespuestaExito.crear("Operarios consultados exitosamente.", resultado), HttpStatus.OK);
+	}
+
+	@PatchMapping("/{id}/activar")
+	public ResponseEntity<RespuestaExito<String>> activarOperarioExistente(@PathVariable UUID id) {
+		var operario = new OperarioDTO.Builder().id(id).build();
+		ActivarOperarioFachada fachada = new ActivarOperarioFachadaImpl();
+		fachada.ejecutar(operario);
+
+		return new ResponseEntity<>(RespuestaExito.crear("El operario se ha activado exitosamente.", ""), HttpStatus.OK);
+	}
+
+	@PatchMapping("/{id}/desactivar")
+	public ResponseEntity<RespuestaExito<String>> desactivarOperarioExistente(@PathVariable UUID id) {
+		var operario = new OperarioDTO.Builder().id(id).build();
+		DesactivarOperarioFachada fachada = new DesactivarOperarioFachadaImpl();
+		fachada.ejecutar(operario);
+
+		return new ResponseEntity<>(RespuestaExito.crear("El operario se ha desactivado exitosamente.", ""), HttpStatus.OK);
 	}
 
 }

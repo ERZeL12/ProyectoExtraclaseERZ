@@ -3,6 +3,9 @@ package co.uco.erzparking.negocio.casouso.servicio.impl;
 import java.util.UUID;
 
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
+import co.uco.erzparking.entidad.EntradaEntidad;
+import co.uco.erzparking.entidad.ServicioEntidad;
+import co.uco.erzparking.entidad.TarifaEntidad;
 import co.uco.erzparking.negocio.casouso.servicio.QuitarServicioCasoUso;
 import co.uco.erzparking.negocio.dominio.ServicioDominio;
 import co.uco.erzparking.transversal.UtilObjeto;
@@ -21,6 +24,7 @@ public class QuitarServicioCasoUsoImpl implements QuitarServicioCasoUso {
 	public void ejecutar(final ServicioDominio datos) {
 		validarIntegridadDatos(datos);
 		validarExiste(datos.getId());
+		validarSinDependencias(datos.getId());
 		quitar(datos);
 	}
 
@@ -36,6 +40,18 @@ public class QuitarServicioCasoUsoImpl implements QuitarServicioCasoUso {
 	private void validarExiste(final UUID id) {
 		if (UtilObjeto.esNulo(daoFactory.getServicioDAO().consultarPorId(id))) {
 			throw ERZParkingExcepcion.crear("El servicio no existe en el sistema");
+		}
+	}
+
+	private void validarSinDependencias(final UUID id) {
+		var servicio = new ServicioEntidad.Builder().id(id).build();
+		var tarifas = daoFactory.getTarifaDAO().consultarPorFiltro(new TarifaEntidad.Builder().servicio(servicio).build());
+		if (!tarifas.isEmpty()) {
+			throw ERZParkingExcepcion.crear("No se puede eliminar el servicio porque tiene tarifas asociadas");
+		}
+		var entradas = daoFactory.getEntradaDAO().consultarPorFiltro(new EntradaEntidad.Builder().servicio(servicio).build());
+		if (!entradas.isEmpty()) {
+			throw ERZParkingExcepcion.crear("No se puede eliminar el servicio porque tiene entradas registradas");
 		}
 	}
 

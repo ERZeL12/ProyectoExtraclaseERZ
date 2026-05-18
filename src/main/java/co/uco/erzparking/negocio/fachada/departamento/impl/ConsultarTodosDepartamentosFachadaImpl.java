@@ -50,4 +50,17 @@ public class ConsultarTodosDepartamentosFachadaImpl implements ConsultarTodosDep
 				.build();
 	}
 
+	public static void main(final String[] args) {
+		try {
+			var filtro = new DepartamentoDTO.Builder().build();
+			var resultado = new ConsultarTodosDepartamentosFachadaImpl().ejecutar(filtro);
+			System.out.println("Total departamentos encontrados: " + resultado.size());
+			resultado.forEach(d -> System.out.println(" - " + d.getId() + " | " + d.getNombre()
+					+ " | pais=" + (d.getPais() != null ? d.getPais().getNombre() : "(sin pais)")));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
 }

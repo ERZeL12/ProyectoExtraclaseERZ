@@ -23,14 +23,15 @@ public class TipoServicioSQLServerDAO extends SQLDAO implements TipoServicioDAO 
 
 	@Override
 	public void crear(final TipoServicioEntidad entidad) {
-		final String sql = "INSERT INTO TipoServicio (id, nombreServicio) VALUES (?, ?)";
-		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
-			ps.setString(1, entidad.getId().toString());
-			ps.setString(2, entidad.getNombreServicio());
-			ps.executeUpdate();
-		} catch (SQLException e) {
-			throw ERZParkingExcepcion.crear(e, "Error al crear el tipo de servicio", "Error al crear el tipo de servicio");
-		}
+	    final String sql = "INSERT INTO TipoServicio (id, nombreServicio, descripcion) VALUES (?, ?, ?)";
+	    try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
+	        ps.setString(1, entidad.getId().toString());
+	        ps.setString(2, entidad.getNombreServicio());
+	        ps.setString(3, entidad.getDescripcion());
+	        ps.executeUpdate();
+	    } catch (SQLException e) {
+	        throw ERZParkingExcepcion.crear(e, "Error al crear el tipo de servicio", "SQLException al insertar en tabla TipoServicio: " + e.getMessage());
+	    }
 	}
 
 	@Override
@@ -58,7 +59,7 @@ public class TipoServicioSQLServerDAO extends SQLDAO implements TipoServicioDAO 
 
 	@Override
 	public TipoServicioEntidad consultarPorId(final UUID id) {
-		final String sql = "SELECT id, nombreServicio FROM TipoServicio WHERE id = ?";
+		final String sql = "SELECT id, nombreServicio, descripcion FROM TipoServicio WHERE id = ?";
 		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
 			ps.setString(1, id.toString());
 			try (ResultSet rs = ps.executeQuery()) {
@@ -79,7 +80,7 @@ public class TipoServicioSQLServerDAO extends SQLDAO implements TipoServicioDAO 
 
 	@Override
 	public List<TipoServicioEntidad> consultarPorFiltro(final TipoServicioEntidad filtro) {
-		final StringBuilder sql = new StringBuilder("SELECT id, nombreServicio FROM TipoServicio WHERE 1=1");
+		final StringBuilder sql = new StringBuilder("SELECT id, nombreServicio, descripcion FROM TipoServicio WHERE 1=1");
 		final List<Object> parametros = new ArrayList<>();
 
 		if (!UtilObjeto.esNulo(filtro) && !UtilTexto.esNula(filtro.getNombreServicio()) && !filtro.getNombreServicio().isEmpty()) {
@@ -107,6 +108,7 @@ public class TipoServicioSQLServerDAO extends SQLDAO implements TipoServicioDAO 
 		return new TipoServicioEntidad.Builder()
 				.id(UUID.fromString(rs.getString("id")))
 				.nombreServicio(rs.getString("nombreServicio"))
+				.descripcion(rs.getString("descripcion"))
 				.build();
 	}
 

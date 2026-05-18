@@ -42,4 +42,16 @@ public class ConsultarTodosPaissFachadaImpl implements ConsultarTodosPaissFachad
 				.build();
 	}
 
+	public static void main(final String[] args) {
+		try {
+			var filtro = new PaisDTO.Builder().build();
+			var resultado = new ConsultarTodosPaissFachadaImpl().ejecutar(filtro);
+			System.out.println("Total paises encontrados: " + resultado.size());
+			resultado.forEach(p -> System.out.println(" - " + p.getId() + " | " + p.getNombre()));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
 }

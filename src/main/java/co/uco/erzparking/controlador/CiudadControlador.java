@@ -1,6 +1,20 @@
 package co.uco.erzparking.controlador;
 
-import co.uco.erzparking.controlador.dto.Respuesta;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import co.uco.erzparking.controlador.dto.RespuestaExito;
 import co.uco.erzparking.dto.CiudadDTO;
 import co.uco.erzparking.negocio.fachada.ciudad.ActualizarCiudadFachada;
 import co.uco.erzparking.negocio.fachada.ciudad.ConsultarCiudadPorIdFachada;
@@ -12,121 +26,57 @@ import co.uco.erzparking.negocio.fachada.ciudad.impl.ConsultarCiudadPorIdFachada
 import co.uco.erzparking.negocio.fachada.ciudad.impl.ConsultarTodosCiudadsFachadaImpl;
 import co.uco.erzparking.negocio.fachada.ciudad.impl.QuitarCiudadFachadaImpl;
 import co.uco.erzparking.negocio.fachada.ciudad.impl.RegistrarCiudadFachadaImpl;
-import co.uco.erzparking.transversal.excepcion.ERZParkingExcepcion;
-import java.util.List;
-import java.util.UUID;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/erzparking/v1/ciudades")
 public class CiudadControlador {
 
 	@PostMapping
-	public ResponseEntity<Respuesta<CiudadDTO>> registrar(@RequestBody CiudadDTO datos) {
-		Respuesta<CiudadDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			RegistrarCiudadFachada fachada = new RegistrarCiudadFachadaImpl();
-			fachada.ejecutar(datos);
-			respuesta.agregarMensaje("Ciudad registrado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<String>> registrarNuevaCiudad(@RequestBody CiudadDTO ciudad) {
+		RegistrarCiudadFachada fachada = new RegistrarCiudadFachadaImpl();
+		fachada.ejecutar(ciudad);
+
+		return new ResponseEntity<>(RespuestaExito.crear("La ciudad se ha registrado exitosamente.", ""), HttpStatus.OK);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Respuesta<CiudadDTO>> actualizar(@PathVariable UUID id, @RequestBody CiudadDTO datos) {
-		Respuesta<CiudadDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			var datosConId = new CiudadDTO.Builder().id(id).build();
-			ActualizarCiudadFachada fachada = new ActualizarCiudadFachadaImpl();
-			fachada.ejecutar(datosConId);
-			respuesta.agregarMensaje("Ciudad actualizado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<String>> modificarInformacionCiudadExistente(@PathVariable UUID id, @RequestBody CiudadDTO ciudad) {
+		var ciudadConId = new CiudadDTO.Builder()
+				.id(id)
+				.nombre(ciudad.getNombre())
+				.departamento(ciudad.getDepartamento())
+				.build();
+
+		ActualizarCiudadFachada fachada = new ActualizarCiudadFachadaImpl();
+		fachada.ejecutar(ciudadConId);
+
+		return new ResponseEntity<>(RespuestaExito.crear("La ciudad se ha actualizado exitosamente.", ""), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Respuesta<CiudadDTO>> quitar(@PathVariable UUID id) {
-		Respuesta<CiudadDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			var datos = new CiudadDTO.Builder().id(id).build();
-			QuitarCiudadFachada fachada = new QuitarCiudadFachadaImpl();
-			fachada.ejecutar(datos);
-			respuesta.agregarMensaje("Ciudad eliminado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<String>> darDeBajaCiudadExistente(@PathVariable UUID id) {
+		var ciudad = new CiudadDTO.Builder().id(id).build();
+		QuitarCiudadFachada fachada = new QuitarCiudadFachadaImpl();
+		fachada.ejecutar(ciudad);
+
+		return new ResponseEntity<>(RespuestaExito.crear("La ciudad se ha eliminado exitosamente.", ""), HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Respuesta<CiudadDTO>> consultarPorId(@PathVariable UUID id) {
-		Respuesta<CiudadDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			var datos = new CiudadDTO.Builder().id(id).build();
-			ConsultarCiudadPorIdFachada fachada = new ConsultarCiudadPorIdFachadaImpl();
-			var resultado = fachada.ejecutar(datos);
-			respuesta.setDatos(List.of(resultado));
-			respuesta.agregarMensaje("Ciudad consultado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<CiudadDTO>> consultarCiudadPorId(@PathVariable UUID id) {
+		var ciudad = new CiudadDTO.Builder().id(id).build();
+		ConsultarCiudadPorIdFachada fachada = new ConsultarCiudadPorIdFachadaImpl();
+		var resultado = fachada.ejecutar(ciudad);
+
+		return new ResponseEntity<>(RespuestaExito.crear("La ciudad se ha consultado exitosamente.", resultado), HttpStatus.OK);
 	}
 
 	@GetMapping
-	public ResponseEntity<Respuesta<CiudadDTO>> consultarTodos() {
-		Respuesta<CiudadDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			ConsultarTodosCiudadsFachada fachada = new ConsultarTodosCiudadsFachadaImpl();
-			var resultados = fachada.ejecutar(new CiudadDTO.Builder().build());
-			respuesta.setDatos(resultados);
-			respuesta.agregarMensaje("Consulta exitosa");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<List<CiudadDTO>>> consultarCiudades() {
+		ConsultarTodosCiudadsFachada fachada = new ConsultarTodosCiudadsFachadaImpl();
+		var resultado = fachada.ejecutar(new CiudadDTO.Builder().build());
+
+		return new ResponseEntity<>(RespuestaExito.crear("Ciudades consultadas exitosamente.", resultado), HttpStatus.OK);
 	}
 
 }

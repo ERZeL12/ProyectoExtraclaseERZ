@@ -31,6 +31,7 @@ public final class CargoEntidadAssembler implements EntidadAssembler<CargoDomini
 				.nombreCargo(cargoAEnsamblar.getNombreCargo())
 				.descripcion(cargoAEnsamblar.getDescripcion())
 				.parqueadero(ParqueaderoEntidadAssembler.getInstance().ensamblarEntidad(cargoAEnsamblar.getParqueadero()))
+				.estadoActual(cargoAEnsamblar.isEstadoActual())
 				.build();
 	}
 
@@ -43,6 +44,7 @@ public final class CargoEntidadAssembler implements EntidadAssembler<CargoDomini
 				.nombreCargo(cargoAEnsamblar.getNombreCargo())
 				.descripcion(cargoAEnsamblar.getDescripcion())
 				.parqueadero(ParqueaderoEntidadAssembler.getInstance().ensamblarDominio(cargoAEnsamblar.getParqueadero()))
+				.estadoActual(cargoAEnsamblar.isEstadoActual())
 				.build();
 	}
 

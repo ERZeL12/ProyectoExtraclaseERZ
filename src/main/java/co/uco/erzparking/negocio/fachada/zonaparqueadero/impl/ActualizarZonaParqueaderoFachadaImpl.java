@@ -1,5 +1,7 @@
 package co.uco.erzparking.negocio.fachada.zonaparqueadero.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
 import co.uco.erzparking.dto.ZonaParqueaderoDTO;
 import co.uco.erzparking.negocio.casouso.zonaparqueadero.ActualizarZonaParqueaderoCasoUso;
@@ -21,7 +23,7 @@ public class ActualizarZonaParqueaderoFachadaImpl implements ActualizarZonaParqu
 	@Override
 	public void ejecutar(final ZonaParqueaderoDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new ZonaParqueaderoDominio.Builder()
 					.id(datos.getId())
 					.nombreZona(datos.getNombreZona())
@@ -36,6 +38,20 @@ public class ActualizarZonaParqueaderoFachadaImpl implements ActualizarZonaParqu
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al procesar la solicitud", excepcion.getMessage());
 				} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var dto = new ZonaParqueaderoDTO.Builder()
+					.id(UUID.fromString("f71b7dc0-306a-4111-a652-3ebb9a619317"))
+					.nombreZona("Zona A Actualizada")
+					.build();
+			new ActualizarZonaParqueaderoFachadaImpl().ejecutar(dto);
+			System.out.println("ZonaParqueadero actualizada exitosamente.");
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

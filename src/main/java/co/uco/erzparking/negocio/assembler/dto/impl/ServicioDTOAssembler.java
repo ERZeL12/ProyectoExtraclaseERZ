@@ -31,6 +31,7 @@ public final class ServicioDTOAssembler implements DTOAssembler<ServicioDominio,
 				.nombreServicio(servicioAEnsamblar.getNombreServicio())
 				.tipoServicio(TipoServicioDTOAssembler.getInstance().ensamblarDominio(servicioAEnsamblar.getTipoServicio()))
 				.parqueadero(ParqueaderoDTOAssembler.getInstance().ensamblarDominio(servicioAEnsamblar.getParqueadero()))
+				.estadoActual(servicioAEnsamblar.isEstadoActual())
 				.build();
 	}
 
@@ -43,6 +44,7 @@ public final class ServicioDTOAssembler implements DTOAssembler<ServicioDominio,
 				.nombreServicio(servicioAEnsamblar.getNombreServicio())
 				.tipoServicio(TipoServicioDTOAssembler.getInstance().ensamblarDTO(servicioAEnsamblar.getTipoServicio()))
 				.parqueadero(ParqueaderoDTOAssembler.getInstance().ensamblarDTO(servicioAEnsamblar.getParqueadero()))
+				.estadoActual(servicioAEnsamblar.isEstadoActual())
 				.build();
 	}
 

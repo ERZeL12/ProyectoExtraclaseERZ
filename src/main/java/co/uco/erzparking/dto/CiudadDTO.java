@@ -12,6 +12,12 @@ public class CiudadDTO {
 	private String nombre;
 	private DepartamentoDTO departamento;
 
+	public CiudadDTO() {
+		setId(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+		setNombre("");
+		setDepartamento(new DepartamentoDTO());
+	}
+
 	private CiudadDTO(final Builder builder) {
 		setId(builder.id);
 		setNombre(builder.nombre);

@@ -25,7 +25,7 @@ public class RegistrarCargoFachadaImpl implements RegistrarCargoFachada {
 	@Override
 	public void ejecutar(final CargoDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new CargoDominio.Builder()
 					.id(datos.getId())
 					.nombreCargo(datos.getNombreCargo())
@@ -53,7 +53,7 @@ public class RegistrarCargoFachadaImpl implements RegistrarCargoFachada {
 					.nombreCargo("Cajero")
 					.descripcion("Encargado de recibir los pagos en el parqueadero")
 					.parqueadero(new ParqueaderoDTO.Builder()
-							.id(UUID.fromString("UUID_DE_PARQUEADERO"))
+							.id(UUID.fromString("6f34728b-d0ee-4440-bd24-38b29b2ed427"))
 							.build())
 					.build();
 			new RegistrarCargoFachadaImpl().ejecutar(dto);

@@ -10,7 +10,6 @@ import co.uco.erzparking.datos.dao.DepartamentoDAO;
 import co.uco.erzparking.datos.dao.EntradaDAO;
 import co.uco.erzparking.datos.dao.EspacioFisicoDAO;
 import co.uco.erzparking.datos.dao.EstadoEspacioFisicoDAO;
-import co.uco.erzparking.datos.dao.MetodoPagoDAO;
 import co.uco.erzparking.datos.dao.OperarioDAO;
 import co.uco.erzparking.datos.dao.PaisDAO;
 import co.uco.erzparking.datos.dao.ParqueaderoDAO;
@@ -31,7 +30,6 @@ import co.uco.erzparking.datos.dao.sql.sqlserver.DepartamentoSQLServerDAO;
 import co.uco.erzparking.datos.dao.sql.sqlserver.EntradaSQLServerDAO;
 import co.uco.erzparking.datos.dao.sql.sqlserver.EspacioFisicoSQLServerDAO;
 import co.uco.erzparking.datos.dao.sql.sqlserver.EstadoEspacioFisicoSQLServerDAO;
-import co.uco.erzparking.datos.dao.sql.sqlserver.MetodoPagoSQLServerDAO;
 import co.uco.erzparking.datos.dao.sql.sqlserver.OperarioSQLServerDAO;
 import co.uco.erzparking.datos.dao.sql.sqlserver.PaisSQLServerDAO;
 import co.uco.erzparking.datos.dao.sql.sqlserver.ParqueaderoSQLServerDAO;
@@ -109,7 +107,6 @@ public class SQLServerDAOFactory extends DAOFactory {
 	@Override public DepartamentoDAO getDepartamentoDAO() { return new DepartamentoSQLServerDAO(conexion); }
 	@Override public PaisDAO getPaisDAO() { return new PaisSQLServerDAO(conexion); }
 	@Override public TipoDocumentoIdentificacionDAO getTipoDocumentoIdentificacionDAO() { return new TipoDocumentoIdentificacionSQLServerDAO(conexion); }
-	@Override public MetodoPagoDAO getMetodoPagoDAO() { return new MetodoPagoSQLServerDAO(conexion); }
 	@Override public OperarioDAO getOperarioDAO() { return new OperarioSQLServerDAO(conexion); }
 	@Override public CargoDAO getCargoDAO() { return new CargoSQLServerDAO(conexion); }
 

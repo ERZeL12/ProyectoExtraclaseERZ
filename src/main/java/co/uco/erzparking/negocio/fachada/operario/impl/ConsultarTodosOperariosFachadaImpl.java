@@ -44,13 +44,22 @@ public class ConsultarTodosOperariosFachadaImpl implements ConsultarTodosOperari
 		var tipoDocumentoIdentificacionDTO = d.getTipoDocumentoIdentificacion() != null
 				? new TipoDocumentoIdentificacionDTO.Builder()
 						.id(d.getTipoDocumentoIdentificacion().getId())
+						.nombreDocumentoIdentificacion(d.getTipoDocumentoIdentificacion().getNombreDocumentoIdentificacion())
+						.descripcion(d.getTipoDocumentoIdentificacion().getDescripcion())
 						.build()
 				: null;
 		var cargoDTO = d.getCargo() != null
-				? new CargoDTO.Builder().id(d.getCargo().getId()).build()
+				? new CargoDTO.Builder()
+						.id(d.getCargo().getId())
+						.nombreCargo(d.getCargo().getNombreCargo())
+						.descripcion(d.getCargo().getDescripcion())
+						.build()
 				: null;
 		var parqueaderoDTO = d.getParqueadero() != null
-				? new ParqueaderoDTO.Builder().id(d.getParqueadero().getId()).build()
+				? new ParqueaderoDTO.Builder()
+						.id(d.getParqueadero().getId())
+						.nombreEstablecimiento(d.getParqueadero().getNombreEstablecimiento())
+						.build()
 				: null;
 		return new OperarioDTO.Builder()
 				.id(d.getId())
@@ -64,6 +73,18 @@ public class ConsultarTodosOperariosFachadaImpl implements ConsultarTodosOperari
 				.cargo(cargoDTO)
 				.parqueadero(parqueaderoDTO)
 				.build();
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new OperarioDTO.Builder().build();
+			var resultado = new ConsultarTodosOperariosFachadaImpl().ejecutar(filtro);
+			System.out.println("Total operarios encontrados: " + resultado.size());
+			resultado.forEach(o -> System.out.println(" - " + o.getId() + " | " + o.getPrimerNombre() + " " + o.getPrimerApellido()));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 }

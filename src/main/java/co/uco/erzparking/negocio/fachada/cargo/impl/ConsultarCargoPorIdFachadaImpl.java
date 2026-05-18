@@ -1,5 +1,7 @@
 package co.uco.erzparking.negocio.fachada.cargo.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
 import co.uco.erzparking.dto.CargoDTO;
 import co.uco.erzparking.dto.ParqueaderoDTO;
@@ -41,6 +43,22 @@ public class ConsultarCargoPorIdFachadaImpl implements ConsultarCargoPorIdFachad
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al procesar la solicitud", excepcion.getMessage());
 		} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new CargoDTO.Builder()
+					.id(UUID.fromString("19108fe6-14ef-4e90-8baa-5a607def5b3d"))
+					.build();
+			var resultado = new ConsultarCargoPorIdFachadaImpl().ejecutar(filtro);
+			System.out.println("Cargo consultado: id=" + resultado.getId()
+					+ ", nombre=" + resultado.getNombreCargo()
+					+ ", descripcion=" + resultado.getDescripcion()
+					+ ", parqueadero=" + (resultado.getParqueadero() != null ? resultado.getParqueadero().getNombreEstablecimiento() : "(sin parqueadero)"));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

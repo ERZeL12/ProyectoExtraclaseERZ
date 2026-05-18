@@ -23,9 +23,10 @@ public class EstadoEspacioFisicoSQLServerDAO extends SQLDAO implements EstadoEsp
 
 	@Override
 	public void crear(final EstadoEspacioFisicoEntidad entidad) {
-		final String sql = "INSERT INTO EstadoEspacioFisico (id, nombreEstadoEspacioFisico) VALUES (NEWID(), ?)";
+		final String sql = "INSERT INTO EstadoEspacioFisico (id, nombreEstadoEspacioFisico) VALUES (?, ?)";
 		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
-			ps.setString(1, entidad.getNombreEstadoEspacioFisico());
+			ps.setString(1, entidad.getId().toString());
+			ps.setString(2, entidad.getNombreEstadoEspacioFisico());
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw ERZParkingExcepcion.crear(e, "Error al crear el estado de espacio fisico", "Error al crear el estado de espacio fisico");
@@ -104,6 +105,7 @@ public class EstadoEspacioFisicoSQLServerDAO extends SQLDAO implements EstadoEsp
 
 	private EstadoEspacioFisicoEntidad construirEstadoEntidad(final ResultSet rs) throws SQLException {
 		return new EstadoEspacioFisicoEntidad.Builder()
+				.id(UUID.fromString(rs.getString("id")))
 				.nombreEstadoEspacioFisico(rs.getString("nombreEstadoEspacioFisico"))
 				.build();
 	}

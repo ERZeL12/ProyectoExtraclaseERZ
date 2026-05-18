@@ -56,11 +56,21 @@ public class RegistrarOperarioCasoUsoImpl implements RegistrarOperarioCasoUso {
 		if (UtilObjeto.esNulo(daoFactory.getTipoDocumentoIdentificacionDAO().consultarPorId(datos.getTipoDocumentoIdentificacion().getId()))) {
 			throw ERZParkingExcepcion.crear("El tipo de documento de identificacion asociado no existe en el sistema");
 		}
-		if (UtilObjeto.esNulo(daoFactory.getCargoDAO().consultarPorId(datos.getCargo().getId()))) {
+		var cargo = daoFactory.getCargoDAO().consultarPorId(datos.getCargo().getId());
+		if (UtilObjeto.esNulo(cargo)) {
 			throw ERZParkingExcepcion.crear("El cargo asociado no existe en el sistema");
+		}
+		if (!cargo.isEstadoActual()) {
+			throw ERZParkingExcepcion.crear("El cargo debe estar activo para asignarlo al operario");
 		}
 		if (UtilObjeto.esNulo(daoFactory.getParqueaderoDAO().consultarPorId(datos.getParqueadero().getId()))) {
 			throw ERZParkingExcepcion.crear("El parqueadero asociado no existe en el sistema");
+		}
+		if (!UtilObjeto.esNulo(daoFactory.getUsuarioDAO().consultarPorNumeroIdentificacion(datos.getNumeroIdentificacion()))) {
+			throw ERZParkingExcepcion.crear("El numero de identificacion ya esta registrado como usuario en el sistema");
+		}
+		if (!UtilObjeto.esNulo(daoFactory.getOperarioDAO().consultarPorNumeroIdentificacion(datos.getNumeroIdentificacion()))) {
+			throw ERZParkingExcepcion.crear("El numero de identificacion ya esta registrado como operario en el sistema");
 		}
 	}
 

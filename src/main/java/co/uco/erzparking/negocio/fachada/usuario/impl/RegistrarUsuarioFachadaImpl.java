@@ -21,7 +21,7 @@ public class RegistrarUsuarioFachadaImpl implements RegistrarUsuarioFachada {
 	@Override
 	public void ejecutar(final UsuarioDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new UsuarioDominio.Builder()
 					.id(datos.getId())
 					.primerNombre(datos.getPrimerNombre())

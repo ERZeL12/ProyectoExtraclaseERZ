@@ -3,6 +3,8 @@ package co.uco.erzparking.negocio.casouso.departamento.impl;
 import java.util.UUID;
 
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
+import co.uco.erzparking.entidad.CiudadEntidad;
+import co.uco.erzparking.entidad.DepartamentoEntidad;
 import co.uco.erzparking.negocio.casouso.departamento.QuitarDepartamentoCasoUso;
 import co.uco.erzparking.negocio.dominio.DepartamentoDominio;
 import co.uco.erzparking.transversal.UtilObjeto;
@@ -21,6 +23,7 @@ public class QuitarDepartamentoCasoUsoImpl implements QuitarDepartamentoCasoUso 
 	public void ejecutar(final DepartamentoDominio datos) {
 		validarIntegridadDatos(datos);
 		validarExiste(datos.getId());
+		validarSinDependencias(datos.getId());
 		quitar(datos);
 	}
 
@@ -36,6 +39,14 @@ public class QuitarDepartamentoCasoUsoImpl implements QuitarDepartamentoCasoUso 
 	private void validarExiste(final UUID id) {
 		if (UtilObjeto.esNulo(daoFactory.getDepartamentoDAO().consultarPorId(id))) {
 			throw ERZParkingExcepcion.crear("El departamento no existe en el sistema");
+		}
+	}
+
+	private void validarSinDependencias(final UUID id) {
+		var departamento = new DepartamentoEntidad.Builder().id(id).build();
+		var ciudades = daoFactory.getCiudadDAO().consultarPorFiltro(new CiudadEntidad.Builder().departamento(departamento).build());
+		if (!ciudades.isEmpty()) {
+			throw ERZParkingExcepcion.crear("No se puede eliminar el departamento porque tiene ciudades asociadas");
 		}
 	}
 

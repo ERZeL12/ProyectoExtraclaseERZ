@@ -35,6 +35,7 @@ public class ConsultarTodosVehiculosCasoUsoImpl implements ConsultarTodosVehicul
 				? new TipoVehiculoDominio.Builder()
 						.id(entidad.getTipoVehiculo().getId())
 						.nombreVehiculo(entidad.getTipoVehiculo().getNombreVehiculo())
+						.descripcion(entidad.getTipoVehiculo().getDescripcion())
 						.build()
 				: null;
 		return new VehiculoDominio.Builder()

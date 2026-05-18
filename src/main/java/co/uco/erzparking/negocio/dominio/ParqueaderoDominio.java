@@ -61,11 +61,11 @@ public class ParqueaderoDominio {
 	}
 
 	private void setCorreoElectronico(final String correoElectronico) {
-		this.correoElectronico = UtilTexto.aplicarTrim(correoElectronico);
+		this.correoElectronico = UtilTexto.eliminarEspaciosInternos(correoElectronico);
 	}
 
 	private void setDireccionEstablecimiento(final String direccionEstablecimiento) {
-		this.direccionEstablecimiento = UtilTexto.aplicarTrim(direccionEstablecimiento);
+		this.direccionEstablecimiento = UtilTexto.colapsarEspaciosInternos(direccionEstablecimiento);
 	}
 
 	private void setCiudad(final CiudadDominio ciudad) {
@@ -97,12 +97,12 @@ public class ParqueaderoDominio {
 		}
 
 		public Builder correoElectronico(final String correoElectronico) {
-			this.correoElectronico = UtilTexto.aplicarTrim(correoElectronico);
+			this.correoElectronico = UtilTexto.eliminarEspaciosInternos(correoElectronico);
 			return this;
 		}
 
 		public Builder direccionEstablecimiento(final String direccionEstablecimiento) {
-			this.direccionEstablecimiento = UtilTexto.aplicarTrim(direccionEstablecimiento);
+			this.direccionEstablecimiento = UtilTexto.colapsarEspaciosInternos(direccionEstablecimiento);
 			return this;
 		}
 

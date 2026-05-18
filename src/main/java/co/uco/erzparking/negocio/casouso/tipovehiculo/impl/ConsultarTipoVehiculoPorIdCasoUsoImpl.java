@@ -38,6 +38,7 @@ public class ConsultarTipoVehiculoPorIdCasoUsoImpl implements ConsultarTipoVehic
 		return new TipoVehiculoDominio.Builder()
 				.id(entidad.getId())
 				.nombreVehiculo(entidad.getNombreVehiculo())
+				.descripcion(entidad.getDescripcion())
 				.build();
 	}
 }

@@ -12,12 +12,14 @@ public class CargoDominio {
 	private String nombreCargo;
 	private String descripcion;
 	private ParqueaderoDominio parqueadero;
+	private boolean estadoActual;
 
 	private CargoDominio(final Builder builder) {
 		setId(builder.id);
 		setNombreCargo(builder.nombreCargo);
 		setDescripcion(builder.descripcion);
 		setParqueadero(builder.parqueadero);
+		setEstadoActual(builder.estadoActual);
 	}
 
 	public UUID getId() {
@@ -36,6 +38,10 @@ public class CargoDominio {
 		return parqueadero;
 	}
 
+	public boolean isEstadoActual() {
+		return estadoActual;
+	}
+
 	private void setId(final UUID id) {
 		this.id = UtilUUID.obtenerValorDefecto(id);
 	}
@@ -52,12 +58,17 @@ public class CargoDominio {
 		this.parqueadero = UtilObjeto.obtenerValorDefecto(parqueadero, null);
 	}
 
+	private void setEstadoActual(final boolean estadoActual) {
+		this.estadoActual = estadoActual;
+	}
+
 	public static class Builder {
 
 		private UUID id;
 		private String nombreCargo;
 		private String descripcion;
 		private ParqueaderoDominio parqueadero;
+		private boolean estadoActual = true;
 
 		public Builder id(final UUID id) {
 			this.id = UtilUUID.obtenerValorDefecto(id);
@@ -76,6 +87,11 @@ public class CargoDominio {
 
 		public Builder parqueadero(final ParqueaderoDominio parqueadero) {
 			this.parqueadero = parqueadero;
+			return this;
+		}
+
+		public Builder estadoActual(final boolean estadoActual) {
+			this.estadoActual = estadoActual;
 			return this;
 		}
 

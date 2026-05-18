@@ -11,6 +11,12 @@ public class TipoDocumentoIdentificacionDTO {
 	private String nombreDocumentoIdentificacion;
 	private String descripcion;
 
+	public TipoDocumentoIdentificacionDTO() {
+		setId(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+		setNombreDocumentoIdentificacion("");
+		setDescripcion("");
+	}
+
 	private TipoDocumentoIdentificacionDTO(final Builder builder) {
 		setId(builder.id);
 		setNombreDocumentoIdentificacion(builder.nombreDocumentoIdentificacion);

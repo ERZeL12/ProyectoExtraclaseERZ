@@ -3,6 +3,8 @@ package co.uco.erzparking.negocio.casouso.estadoespaciofisico.impl;
 import java.util.UUID;
 
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
+import co.uco.erzparking.entidad.EspacioFisicoEntidad;
+import co.uco.erzparking.entidad.EstadoEspacioFisicoEntidad;
 import co.uco.erzparking.negocio.casouso.estadoespaciofisico.QuitarEstadoEspacioFisicoCasoUso;
 import co.uco.erzparking.negocio.dominio.EstadoEspacioFisicoDominio;
 import co.uco.erzparking.transversal.UtilObjeto;
@@ -21,6 +23,7 @@ public class QuitarEstadoEspacioFisicoCasoUsoImpl implements QuitarEstadoEspacio
 	public void ejecutar(final EstadoEspacioFisicoDominio datos) {
 		validarIntegridadDatos(datos);
 		validarExiste(datos.getId());
+		validarSinDependencias(datos.getId());
 		quitar(datos);
 	}
 
@@ -36,6 +39,14 @@ public class QuitarEstadoEspacioFisicoCasoUsoImpl implements QuitarEstadoEspacio
 	private void validarExiste(final UUID id) {
 		if (UtilObjeto.esNulo(daoFactory.getEstadoEspacioFisicoDAO().consultarPorId(id))) {
 			throw ERZParkingExcepcion.crear("El estadoEspacioFisico no existe en el sistema");
+		}
+	}
+
+	private void validarSinDependencias(final UUID id) {
+		var estado = new EstadoEspacioFisicoEntidad.Builder().id(id).build();
+		var espacios = daoFactory.getEspacioFisicoDAO().consultarPorFiltro(new EspacioFisicoEntidad.Builder().estadoEspacioFisico(estado).build());
+		if (!espacios.isEmpty()) {
+			throw ERZParkingExcepcion.crear("No se puede eliminar el estado porque tiene espacios fisicos en ese estado");
 		}
 	}
 

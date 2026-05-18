@@ -12,6 +12,12 @@ public class VehiculoDTO {
 	private String placaVehiculo;
 	private TipoVehiculoDTO tipoVehiculo;
 
+	public VehiculoDTO() {
+		setId(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+		setPlacaVehiculo("");
+		setTipoVehiculo(new TipoVehiculoDTO());
+	}
+
 	private VehiculoDTO(final Builder builder) {
 		setId(builder.id);
 		setPlacaVehiculo(builder.placaVehiculo);
@@ -35,7 +41,7 @@ public class VehiculoDTO {
 	}
 
 	private void setPlacaVehiculo(final String placaVehiculo) {
-		this.placaVehiculo = UtilTexto.aplicarTrim(placaVehiculo);
+		this.placaVehiculo = UtilTexto.eliminarEspaciosInternos(placaVehiculo);
 	}
 
 	private void setTipoVehiculo(final TipoVehiculoDTO tipoVehiculo) {
@@ -54,7 +60,7 @@ public class VehiculoDTO {
 		}
 
 		public Builder placaVehiculo(final String placaVehiculo) {
-			this.placaVehiculo = UtilTexto.aplicarTrim(placaVehiculo);
+			this.placaVehiculo = UtilTexto.eliminarEspaciosInternos(placaVehiculo);
 			return this;
 		}
 

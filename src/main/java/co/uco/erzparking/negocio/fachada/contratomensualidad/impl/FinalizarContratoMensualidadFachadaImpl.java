@@ -1,5 +1,7 @@
 package co.uco.erzparking.negocio.fachada.contratomensualidad.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
 import co.uco.erzparking.dto.ContratoMensualidadDTO;
 import co.uco.erzparking.negocio.casouso.contratomensualidad.FinalizarContratoMensualidadCasoUso;
@@ -21,7 +23,7 @@ public class FinalizarContratoMensualidadFachadaImpl implements FinalizarContrat
 	@Override
 	public void ejecutar(final ContratoMensualidadDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new ContratoMensualidadDominio.Builder().id(datos.getId()).build();
 			casoUso.ejecutar(dominio);
 			daoFactory.confirmarTransaccion();
@@ -33,6 +35,19 @@ public class FinalizarContratoMensualidadFachadaImpl implements FinalizarContrat
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al procesar la solicitud", excepcion.getMessage());
 				} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var dto = new ContratoMensualidadDTO.Builder()
+					.id(UUID.fromString("a40c7a23-0482-49e0-906c-7865b5d34e4e"))
+					.build();
+			new FinalizarContratoMensualidadFachadaImpl().ejecutar(dto);
+			System.out.println("Contrato mensualidad finalizado exitosamente.");
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

@@ -35,6 +35,7 @@ public final class OperarioEntidadAssembler implements EntidadAssembler<Operario
 				.numeroTelefonico(operarioAEnsamblar.getNumeroTelefonico())
 				.cargo(CargoEntidadAssembler.getInstance().ensamblarEntidad(operarioAEnsamblar.getCargo()))
 				.parqueadero(ParqueaderoEntidadAssembler.getInstance().ensamblarEntidad(operarioAEnsamblar.getParqueadero()))
+				.estadoActual(operarioAEnsamblar.isEstadoActual())
 				.build();
 	}
 
@@ -52,6 +53,7 @@ public final class OperarioEntidadAssembler implements EntidadAssembler<Operario
 				.numeroTelefonico(operarioAEnsamblar.getNumeroTelefonico())
 				.cargo(CargoEntidadAssembler.getInstance().ensamblarDominio(operarioAEnsamblar.getCargo()))
 				.parqueadero(ParqueaderoEntidadAssembler.getInstance().ensamblarDominio(operarioAEnsamblar.getParqueadero()))
+				.estadoActual(operarioAEnsamblar.isEstadoActual())
 				.build();
 	}
 

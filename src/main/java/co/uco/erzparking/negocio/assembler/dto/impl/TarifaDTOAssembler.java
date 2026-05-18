@@ -33,6 +33,7 @@ public final class TarifaDTOAssembler implements DTOAssembler<TarifaDominio, Tar
 				.fechaFinVigenciaTarifa(tarifaAEnsamblar.getFechaFinVigenciaTarifa())
 				.tipoVehiculo(TipoVehiculoDTOAssembler.getInstance().ensamblarDominio(tarifaAEnsamblar.getTipoVehiculo()))
 				.servicio(ServicioDTOAssembler.getInstance().ensamblarDominio(tarifaAEnsamblar.getServicio()))
+				.estadoActual(tarifaAEnsamblar.isEstadoActual())
 				.build();
 	}
 
@@ -47,6 +48,7 @@ public final class TarifaDTOAssembler implements DTOAssembler<TarifaDominio, Tar
 				.fechaFinVigenciaTarifa(tarifaAEnsamblar.getFechaFinVigenciaTarifa())
 				.tipoVehiculo(TipoVehiculoDTOAssembler.getInstance().ensamblarDTO(tarifaAEnsamblar.getTipoVehiculo()))
 				.servicio(ServicioDTOAssembler.getInstance().ensamblarDTO(tarifaAEnsamblar.getServicio()))
+				.estadoActual(tarifaAEnsamblar.isEstadoActual())
 				.build();
 	}
 

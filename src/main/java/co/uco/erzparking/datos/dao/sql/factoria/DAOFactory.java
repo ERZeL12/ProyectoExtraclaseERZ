@@ -9,7 +9,6 @@ import co.uco.erzparking.datos.dao.DepartamentoDAO;
 import co.uco.erzparking.datos.dao.EntradaDAO;
 import co.uco.erzparking.datos.dao.EspacioFisicoDAO;
 import co.uco.erzparking.datos.dao.EstadoEspacioFisicoDAO;
-import co.uco.erzparking.datos.dao.MetodoPagoDAO;
 import co.uco.erzparking.datos.dao.OperarioDAO;
 import co.uco.erzparking.datos.dao.PaisDAO;
 import co.uco.erzparking.datos.dao.ParqueaderoDAO;
@@ -61,7 +60,6 @@ public abstract class DAOFactory {
 	public abstract DepartamentoDAO getDepartamentoDAO();
 	public abstract PaisDAO getPaisDAO();
 	public abstract TipoDocumentoIdentificacionDAO getTipoDocumentoIdentificacionDAO();
-	public abstract MetodoPagoDAO getMetodoPagoDAO();
 	public abstract OperarioDAO getOperarioDAO();
 	public abstract CargoDAO getCargoDAO();
 

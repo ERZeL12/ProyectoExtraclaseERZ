@@ -1,5 +1,7 @@
 package co.uco.erzparking.negocio.fachada.ciudad.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
 import co.uco.erzparking.dto.CiudadDTO;
 import co.uco.erzparking.dto.DepartamentoDTO;
@@ -50,6 +52,20 @@ public class ConsultarCiudadPorIdFachadaImpl implements ConsultarCiudadPorIdFach
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al procesar la solicitud", excepcion.getMessage());
 		} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new CiudadDTO.Builder()
+					.id(UUID.fromString("434e52b1-924a-4fd6-9a08-3b13d3362e72"))
+					.build();
+			var resultado = new ConsultarCiudadPorIdFachadaImpl().ejecutar(filtro);
+			System.out.println("Ciudad consultada: id=" + resultado.getId() + ", nombre=" + resultado.getNombre()
+					+ ", departamento=" + (resultado.getDepartamento() != null ? resultado.getDepartamento().getNombre() : "(sin departamento)"));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

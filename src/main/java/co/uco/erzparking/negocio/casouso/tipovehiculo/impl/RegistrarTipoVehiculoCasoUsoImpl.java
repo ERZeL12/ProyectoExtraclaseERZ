@@ -45,6 +45,7 @@ public class RegistrarTipoVehiculoCasoUsoImpl implements RegistrarTipoVehiculoCa
 		var entidad = new TipoVehiculoEntidad.Builder()
 				.id(generarIdUnico())
 				.nombreVehiculo(datos.getNombreVehiculo())
+				.descripcion(datos.getDescripcion())
 				.build();
 		daoFactory.getTipoVehiculoDAO().crear(entidad);
 	}

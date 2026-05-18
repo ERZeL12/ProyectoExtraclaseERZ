@@ -22,7 +22,7 @@ public class QuitarPaisFachadaImpl implements QuitarPaisFachada {
 	@Override
 	public void ejecutar(final PaisDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new PaisDominio.Builder().id(datos.getId()).build();
 			casoUso.ejecutar(dominio);
 			daoFactory.confirmarTransaccion();

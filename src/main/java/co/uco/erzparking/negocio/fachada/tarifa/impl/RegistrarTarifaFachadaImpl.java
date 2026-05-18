@@ -27,7 +27,7 @@ public class RegistrarTarifaFachadaImpl implements RegistrarTarifaFachada {
 	@Override
 	public void ejecutar(final TarifaDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new TarifaDominio.Builder()
 					.id(datos.getId())
 					.valorServicio(datos.getValorServicio())
@@ -55,14 +55,20 @@ public class RegistrarTarifaFachadaImpl implements RegistrarTarifaFachada {
 
 	public static void main(final String[] args) {
 		try {
+			var inicio = new java.util.Date();
+			var cal = java.util.Calendar.getInstance();
+			cal.setTime(inicio);
+			cal.add(java.util.Calendar.YEAR, 1);
+			var fin = cal.getTime();
 			var dto = new TarifaDTO.Builder()
 					.valorServicio(5000.00)
-					.fechaInicioVigenciaTarifa(new java.util.Date())
+					.fechaInicioVigenciaTarifa(inicio)
+					.fechaFinVigenciaTarifa(fin)
 					.tipoVehiculo(new TipoVehiculoDTO.Builder()
-							.id(UUID.fromString("UUID_DE_TIPOVEHICULO"))
+							.id(UUID.fromString("66b78346-d83d-4bf1-9346-ce04d18d8e27"))
 							.build())
 					.servicio(new ServicioDTO.Builder()
-							.id(UUID.fromString("UUID_DE_SERVICIO"))
+							.id(UUID.fromString("54d2035f-120c-47e4-a54d-06b149349c11"))
 							.build())
 					.build();
 			new RegistrarTarifaFachadaImpl().ejecutar(dto);

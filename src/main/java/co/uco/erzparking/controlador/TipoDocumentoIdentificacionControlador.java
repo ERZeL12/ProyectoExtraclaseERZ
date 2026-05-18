@@ -1,6 +1,19 @@
 package co.uco.erzparking.controlador;
 
-import co.uco.erzparking.controlador.dto.Respuesta;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import co.uco.erzparking.controlador.dto.RespuestaExito;
 import co.uco.erzparking.dto.TipoDocumentoIdentificacionDTO;
 import co.uco.erzparking.negocio.fachada.tipodocumentoidentificacion.ConsultarTipoDocumentoIdentificacionPorIdFachada;
 import co.uco.erzparking.negocio.fachada.tipodocumentoidentificacion.ConsultarTodosTipoDocumentoIdentificacionsFachada;
@@ -10,100 +23,43 @@ import co.uco.erzparking.negocio.fachada.tipodocumentoidentificacion.impl.Consul
 import co.uco.erzparking.negocio.fachada.tipodocumentoidentificacion.impl.ConsultarTodosTipoDocumentoIdentificacionsFachadaImpl;
 import co.uco.erzparking.negocio.fachada.tipodocumentoidentificacion.impl.QuitarTipoDocumentoIdentificacionFachadaImpl;
 import co.uco.erzparking.negocio.fachada.tipodocumentoidentificacion.impl.RegistrarTipoDocumentoIdentificacionFachadaImpl;
-import co.uco.erzparking.transversal.excepcion.ERZParkingExcepcion;
-import java.util.List;
-import java.util.UUID;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/erzparking/v1/tiposdocumentoidentificacion")
 public class TipoDocumentoIdentificacionControlador {
 
 	@PostMapping
-	public ResponseEntity<Respuesta<TipoDocumentoIdentificacionDTO>> registrar(@RequestBody TipoDocumentoIdentificacionDTO datos) {
-		Respuesta<TipoDocumentoIdentificacionDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			RegistrarTipoDocumentoIdentificacionFachada fachada = new RegistrarTipoDocumentoIdentificacionFachadaImpl();
-			fachada.ejecutar(datos);
-			respuesta.agregarMensaje("TipoDocumentoIdentificacion registrado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<String>> registrarNuevoTipoDocumentoIdentificacion(@RequestBody TipoDocumentoIdentificacionDTO tipo) {
+		RegistrarTipoDocumentoIdentificacionFachada fachada = new RegistrarTipoDocumentoIdentificacionFachadaImpl();
+		fachada.ejecutar(tipo);
+
+		return new ResponseEntity<>(RespuestaExito.crear("El tipo de documento de identificacion se ha registrado exitosamente.", ""), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Respuesta<TipoDocumentoIdentificacionDTO>> quitar(@PathVariable UUID id) {
-		Respuesta<TipoDocumentoIdentificacionDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			var datos = new TipoDocumentoIdentificacionDTO.Builder().id(id).build();
-			QuitarTipoDocumentoIdentificacionFachada fachada = new QuitarTipoDocumentoIdentificacionFachadaImpl();
-			fachada.ejecutar(datos);
-			respuesta.agregarMensaje("TipoDocumentoIdentificacion eliminado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<String>> darDeBajaTipoDocumentoIdentificacionExistente(@PathVariable UUID id) {
+		var tipo = new TipoDocumentoIdentificacionDTO.Builder().id(id).build();
+		QuitarTipoDocumentoIdentificacionFachada fachada = new QuitarTipoDocumentoIdentificacionFachadaImpl();
+		fachada.ejecutar(tipo);
+
+		return new ResponseEntity<>(RespuestaExito.crear("El tipo de documento de identificacion se ha eliminado exitosamente.", ""), HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Respuesta<TipoDocumentoIdentificacionDTO>> consultarPorId(@PathVariable UUID id) {
-		Respuesta<TipoDocumentoIdentificacionDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			var datos = new TipoDocumentoIdentificacionDTO.Builder().id(id).build();
-			ConsultarTipoDocumentoIdentificacionPorIdFachada fachada = new ConsultarTipoDocumentoIdentificacionPorIdFachadaImpl();
-			var resultado = fachada.ejecutar(datos);
-			respuesta.setDatos(List.of(resultado));
-			respuesta.agregarMensaje("TipoDocumentoIdentificacion consultado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<TipoDocumentoIdentificacionDTO>> consultarTipoDocumentoIdentificacionPorId(@PathVariable UUID id) {
+		var tipo = new TipoDocumentoIdentificacionDTO.Builder().id(id).build();
+		ConsultarTipoDocumentoIdentificacionPorIdFachada fachada = new ConsultarTipoDocumentoIdentificacionPorIdFachadaImpl();
+		var resultado = fachada.ejecutar(tipo);
+
+		return new ResponseEntity<>(RespuestaExito.crear("El tipo de documento de identificacion se ha consultado exitosamente.", resultado), HttpStatus.OK);
 	}
 
 	@GetMapping
-	public ResponseEntity<Respuesta<TipoDocumentoIdentificacionDTO>> consultarTodos() {
-		Respuesta<TipoDocumentoIdentificacionDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			ConsultarTodosTipoDocumentoIdentificacionsFachada fachada = new ConsultarTodosTipoDocumentoIdentificacionsFachadaImpl();
-			var resultados = fachada.ejecutar(new TipoDocumentoIdentificacionDTO.Builder().build());
-			respuesta.setDatos(resultados);
-			respuesta.agregarMensaje("Consulta exitosa");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<List<TipoDocumentoIdentificacionDTO>>> consultarTiposDocumentoIdentificacion() {
+		ConsultarTodosTipoDocumentoIdentificacionsFachada fachada = new ConsultarTodosTipoDocumentoIdentificacionsFachadaImpl();
+		var resultado = fachada.ejecutar(new TipoDocumentoIdentificacionDTO.Builder().build());
+
+		return new ResponseEntity<>(RespuestaExito.crear("Tipos de documento de identificacion consultados exitosamente.", resultado), HttpStatus.OK);
 	}
 
 }

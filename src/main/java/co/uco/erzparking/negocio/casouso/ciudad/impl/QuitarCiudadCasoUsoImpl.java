@@ -3,6 +3,9 @@ package co.uco.erzparking.negocio.casouso.ciudad.impl;
 import java.util.UUID;
 
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
+import co.uco.erzparking.entidad.CiudadEntidad;
+import co.uco.erzparking.entidad.ParqueaderoEntidad;
+import co.uco.erzparking.entidad.UsuarioEntidad;
 import co.uco.erzparking.negocio.casouso.ciudad.QuitarCiudadCasoUso;
 import co.uco.erzparking.negocio.dominio.CiudadDominio;
 import co.uco.erzparking.transversal.UtilObjeto;
@@ -21,6 +24,7 @@ public class QuitarCiudadCasoUsoImpl implements QuitarCiudadCasoUso {
 	public void ejecutar(final CiudadDominio datos) {
 		validarIntegridadDatos(datos);
 		validarExiste(datos.getId());
+		validarSinDependencias(datos.getId());
 		quitar(datos);
 	}
 
@@ -36,6 +40,18 @@ public class QuitarCiudadCasoUsoImpl implements QuitarCiudadCasoUso {
 	private void validarExiste(final UUID id) {
 		if (UtilObjeto.esNulo(daoFactory.getCiudadDAO().consultarPorId(id))) {
 			throw ERZParkingExcepcion.crear("El ciudad no existe en el sistema");
+		}
+	}
+
+	private void validarSinDependencias(final UUID id) {
+		var ciudad = new CiudadEntidad.Builder().id(id).build();
+		var usuarios = daoFactory.getUsuarioDAO().consultarPorFiltro(new UsuarioEntidad.Builder().ciudad(ciudad).build());
+		if (!usuarios.isEmpty()) {
+			throw ERZParkingExcepcion.crear("No se puede eliminar la ciudad porque tiene usuarios asociados");
+		}
+		var parqueaderos = daoFactory.getParqueaderoDAO().consultarPorFiltro(new ParqueaderoEntidad.Builder().ciudad(ciudad).build());
+		if (!parqueaderos.isEmpty()) {
+			throw ERZParkingExcepcion.crear("No se puede eliminar la ciudad porque tiene parqueaderos asociados");
 		}
 	}
 

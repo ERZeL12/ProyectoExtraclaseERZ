@@ -1,6 +1,7 @@
 package co.uco.erzparking.negocio.casouso.espaciofisico.impl;
 
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
+import co.uco.erzparking.datos.dao.sql.sqlserver.ContratoMensualidadSQLServerDAO;
 import co.uco.erzparking.entidad.EspacioFisicoEntidad;
 import co.uco.erzparking.entidad.EstadoEspacioFisicoEntidad;
 import co.uco.erzparking.negocio.casouso.espaciofisico.ActualizarEspacioFisicoCasoUso;
@@ -22,6 +23,7 @@ public class ActualizarEspacioFisicoCasoUsoImpl implements ActualizarEspacioFisi
 	public void ejecutar(final EspacioFisicoDominio datos) {
 		validarIntegridadDatos(datos);
 		validarExiste(datos.getId());
+		validarSinVehiculoAsignado(datos.getId());
 		actualizar(datos);
 	}
 
@@ -32,7 +34,7 @@ public class ActualizarEspacioFisicoCasoUsoImpl implements ActualizarEspacioFisi
 		if (UtilObjeto.esNulo(datos.getId())) {
 			throw ERZParkingExcepcion.crear("El identificador del espacio fisico es obligatorio para actualizar");
 		}
-		if (UtilObjeto.esNulo(datos.getEstadoEspacioFisico()) || UtilObjeto.esNulo(datos.getEstadoEspacioFisico().getNombreEstadoEspacioFisico())) {
+		if (UtilObjeto.esNulo(datos.getEstadoEspacioFisico()) || UtilObjeto.esNulo(datos.getEstadoEspacioFisico().getId())) {
 			throw ERZParkingExcepcion.crear("El estado del espacio fisico es obligatorio para actualizar");
 		}
 	}
@@ -40,6 +42,19 @@ public class ActualizarEspacioFisicoCasoUsoImpl implements ActualizarEspacioFisi
 	private void validarExiste(final UUID id) {
 		if (UtilObjeto.esNulo(daoFactory.getEspacioFisicoDAO().consultarPorId(id))) {
 			throw ERZParkingExcepcion.crear("El espacio fisico que intenta actualizar no existe en el sistema");
+		}
+	}
+
+	private void validarSinVehiculoAsignado(final UUID espacioFisicoId) {
+		var espacio = daoFactory.getEspacioFisicoDAO().consultarPorId(espacioFisicoId);
+		if (!UtilObjeto.esNulo(espacio.getEstadoEspacioFisico())
+				&& "OCUPADO".equalsIgnoreCase(espacio.getEstadoEspacioFisico().getNombreEstadoEspacioFisico())) {
+			throw ERZParkingExcepcion.crear("No se puede cambiar el estado porque el espacio tiene un vehiculo asignado");
+		}
+		var contrato = ((ContratoMensualidadSQLServerDAO) daoFactory.getContratoMensualidadDAO())
+				.consultarContratoVigentePorEspacioFisico(espacioFisicoId);
+		if (!UtilObjeto.esNulo(contrato)) {
+			throw ERZParkingExcepcion.crear("No se puede cambiar el estado porque el espacio tiene un contrato mensual vigente");
 		}
 	}
 

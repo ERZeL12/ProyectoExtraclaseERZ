@@ -44,10 +44,12 @@ public class ActualizarCargoCasoUsoImpl implements ActualizarCargoCasoUso {
 	}
 
 	private void actualizar(final CargoDominio datos) {
+		var existente = daoFactory.getCargoDAO().consultarPorId(datos.getId());
 		var entidad = new CargoEntidad.Builder()
 				.id(datos.getId())
 				.nombreCargo(datos.getNombreCargo())
 				.descripcion(datos.getDescripcion())
+				.estadoActual(existente.isEstadoActual())
 				.build();
 		daoFactory.getCargoDAO().actualizar(datos.getId(), entidad);
 	}

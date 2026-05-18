@@ -18,6 +18,21 @@ public class OperarioDTO {
 	private long numeroTelefonico;
 	private CargoDTO cargo;
 	private ParqueaderoDTO parqueadero;
+	private boolean estadoActual;
+
+	public OperarioDTO() {
+		setId(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+		setTipoDocumentoIdentificacion(new TipoDocumentoIdentificacionDTO());
+		setNumeroIdentificacion("");
+		setPrimerNombre("");
+		setSegundoNombre("");
+		setPrimerApellido("");
+		setSegundoApellido("");
+		setNumeroTelefonico(0L);
+		setCargo(new CargoDTO());
+		setParqueadero(new ParqueaderoDTO());
+		setEstadoActual(true);
+	}
 
 	private OperarioDTO(final Builder builder) {
 		setId(builder.id);
@@ -30,6 +45,7 @@ public class OperarioDTO {
 		setNumeroTelefonico(builder.numeroTelefonico);
 		setCargo(builder.cargo);
 		setParqueadero(builder.parqueadero);
+		setEstadoActual(builder.estadoActual);
 	}
 
 	public UUID getId() {
@@ -72,6 +88,10 @@ public class OperarioDTO {
 		return parqueadero;
 	}
 
+	public boolean isEstadoActual() {
+		return estadoActual;
+	}
+
 	private void setId(final UUID id) {
 		this.id = UtilUUID.obtenerValorDefecto(id);
 	}
@@ -81,7 +101,7 @@ public class OperarioDTO {
 	}
 
 	private void setNumeroIdentificacion(final String numeroIdentificacion) {
-		this.numeroIdentificacion = UtilTexto.aplicarTrim(numeroIdentificacion);
+		this.numeroIdentificacion = UtilTexto.eliminarEspaciosInternos(numeroIdentificacion);
 	}
 
 	private void setPrimerNombre(final String primerNombre) {
@@ -112,6 +132,10 @@ public class OperarioDTO {
 		this.parqueadero = UtilObjeto.obtenerValorDefecto(parqueadero, null);
 	}
 
+	private void setEstadoActual(final boolean estadoActual) {
+		this.estadoActual = estadoActual;
+	}
+
 	public static class Builder {
 
 		private UUID id;
@@ -124,6 +148,7 @@ public class OperarioDTO {
 		private long numeroTelefonico;
 		private CargoDTO cargo;
 		private ParqueaderoDTO parqueadero;
+		private boolean estadoActual = true;
 
 		public Builder id(final UUID id) {
 			this.id = UtilUUID.obtenerValorDefecto(id);
@@ -136,7 +161,7 @@ public class OperarioDTO {
 		}
 
 		public Builder numeroIdentificacion(final String numeroIdentificacion) {
-			this.numeroIdentificacion = UtilTexto.aplicarTrim(numeroIdentificacion);
+			this.numeroIdentificacion = UtilTexto.eliminarEspaciosInternos(numeroIdentificacion);
 			return this;
 		}
 
@@ -172,6 +197,11 @@ public class OperarioDTO {
 
 		public Builder parqueadero(final ParqueaderoDTO parqueadero) {
 			this.parqueadero = parqueadero;
+			return this;
+		}
+
+		public Builder estadoActual(final boolean estadoActual) {
+			this.estadoActual = estadoActual;
 			return this;
 		}
 

@@ -51,4 +51,16 @@ public class ConsultarTodosCargosFachadaImpl implements ConsultarTodosCargosFach
 				.build();
 	}
 
+	public static void main(final String[] args) {
+		try {
+			var filtro = new CargoDTO.Builder().build();
+			var resultado = new ConsultarTodosCargosFachadaImpl().ejecutar(filtro);
+			System.out.println("Total cargos encontrados: " + resultado.size());
+			resultado.forEach(c -> System.out.println(" - " + c.getId() + " | " + c.getNombreCargo()));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
 }

@@ -1,5 +1,7 @@
 package co.uco.erzparking.negocio.fachada.pais.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
 import co.uco.erzparking.dto.PaisDTO;
 import co.uco.erzparking.negocio.casouso.pais.ConsultarPaisPorIdCasoUso;
@@ -34,6 +36,19 @@ public class ConsultarPaisPorIdFachadaImpl implements ConsultarPaisPorIdFachada 
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al procesar la solicitud", excepcion.getMessage());
 		} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new PaisDTO.Builder()
+					.id(UUID.fromString("27c48f27-9bb0-455b-b76d-7abd081fd1c3"))
+					.build();
+			var resultado = new ConsultarPaisPorIdFachadaImpl().ejecutar(filtro);
+			System.out.println("Pais consultado: id=" + resultado.getId() + ", nombre=" + resultado.getNombre());
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

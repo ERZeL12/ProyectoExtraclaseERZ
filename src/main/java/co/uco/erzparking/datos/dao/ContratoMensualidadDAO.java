@@ -1,5 +1,7 @@
 package co.uco.erzparking.datos.dao;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.ActualizarDAO;
 import co.uco.erzparking.datos.ConsultarPorFiltroDAO;
 import co.uco.erzparking.datos.ConsultarPorIdDAO;
@@ -8,5 +10,7 @@ import co.uco.erzparking.datos.CrearDAO;
 import co.uco.erzparking.entidad.ContratoMensualidadEntidad;
 
 public interface ContratoMensualidadDAO extends CrearDAO<ContratoMensualidadEntidad>, ActualizarDAO<ContratoMensualidadEntidad>, ConsultarPorIdDAO<ContratoMensualidadEntidad>, ConsultarTodosDAO<ContratoMensualidadEntidad>, ConsultarPorFiltroDAO<ContratoMensualidadEntidad> {
+
+	void cambiarEstadoActual(UUID id, boolean nuevoEstado);
 
 }

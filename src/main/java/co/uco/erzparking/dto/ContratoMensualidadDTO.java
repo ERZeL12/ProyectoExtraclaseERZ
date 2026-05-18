@@ -15,6 +15,17 @@ public class ContratoMensualidadDTO {
 	private TarifaDTO tarifa;
 	private UsuarioVehiculoDTO usuarioVehiculo;
 	private EspacioFisicoDTO espacioFisico;
+	private boolean estadoActual;
+
+	public ContratoMensualidadDTO() {
+		setId(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+		setFechaInicioContrato(java.sql.Date.valueOf("0001-01-01"));
+		setFechaFinContrato(java.sql.Date.valueOf("0001-01-01"));
+		setTarifa(new TarifaDTO());
+		setUsuarioVehiculo(new UsuarioVehiculoDTO());
+		setEspacioFisico(new EspacioFisicoDTO());
+		setEstadoActual(true);
+	}
 
 	private ContratoMensualidadDTO(final Builder builder) {
 		setId(builder.id);
@@ -23,6 +34,7 @@ public class ContratoMensualidadDTO {
 		setTarifa(builder.tarifa);
 		setUsuarioVehiculo(builder.usuarioVehiculo);
 		setEspacioFisico(builder.espacioFisico);
+		setEstadoActual(builder.estadoActual);
 	}
 
 	public UUID getId() {
@@ -49,6 +61,10 @@ public class ContratoMensualidadDTO {
 		return espacioFisico;
 	}
 
+	public boolean isEstadoActual() {
+		return estadoActual;
+	}
+
 	private void setId(final UUID id) {
 		this.id = UtilUUID.obtenerValorDefecto(id);
 	}
@@ -73,6 +89,10 @@ public class ContratoMensualidadDTO {
 		this.espacioFisico = UtilObjeto.obtenerValorDefecto(espacioFisico, null);
 	}
 
+	private void setEstadoActual(final boolean estadoActual) {
+		this.estadoActual = estadoActual;
+	}
+
 	public static class Builder {
 
 		private UUID id;
@@ -81,6 +101,7 @@ public class ContratoMensualidadDTO {
 		private TarifaDTO tarifa;
 		private UsuarioVehiculoDTO usuarioVehiculo;
 		private EspacioFisicoDTO espacioFisico;
+		private boolean estadoActual = true;
 
 		public Builder id(final UUID id) {
 			this.id = UtilUUID.obtenerValorDefecto(id);
@@ -109,6 +130,11 @@ public class ContratoMensualidadDTO {
 
 		public Builder espacioFisico(final EspacioFisicoDTO espacioFisico) {
 			this.espacioFisico = espacioFisico;
+			return this;
+		}
+
+		public Builder estadoActual(final boolean estadoActual) {
+			this.estadoActual = estadoActual;
 			return this;
 		}
 

@@ -15,6 +15,7 @@ public class ContratoMensualidadDominio {
 	private TarifaDominio tarifa;
 	private UsuarioVehiculoDominio usuarioVehiculo;
 	private EspacioFisicoDominio espacioFisico;
+	private boolean estadoActual;
 
 	private ContratoMensualidadDominio(final Builder builder) {
 		setId(builder.id);
@@ -23,6 +24,7 @@ public class ContratoMensualidadDominio {
 		setTarifa(builder.tarifa);
 		setUsuarioVehiculo(builder.usuarioVehiculo);
 		setEspacioFisico(builder.espacioFisico);
+		setEstadoActual(builder.estadoActual);
 	}
 
 	public UUID getId() {
@@ -49,6 +51,10 @@ public class ContratoMensualidadDominio {
 		return espacioFisico;
 	}
 
+	public boolean isEstadoActual() {
+		return estadoActual;
+	}
+
 	private void setId(final UUID id) {
 		this.id = UtilUUID.obtenerValorDefecto(id);
 	}
@@ -73,6 +79,10 @@ public class ContratoMensualidadDominio {
 		this.espacioFisico = UtilObjeto.obtenerValorDefecto(espacioFisico, null);
 	}
 
+	private void setEstadoActual(final boolean estadoActual) {
+		this.estadoActual = estadoActual;
+	}
+
 	public static class Builder {
 
 		private UUID id;
@@ -81,6 +91,7 @@ public class ContratoMensualidadDominio {
 		private TarifaDominio tarifa;
 		private UsuarioVehiculoDominio usuarioVehiculo;
 		private EspacioFisicoDominio espacioFisico;
+		private boolean estadoActual = true;
 
 		public Builder id(final UUID id) {
 			this.id = UtilUUID.obtenerValorDefecto(id);
@@ -109,6 +120,11 @@ public class ContratoMensualidadDominio {
 
 		public Builder espacioFisico(final EspacioFisicoDominio espacioFisico) {
 			this.espacioFisico = espacioFisico;
+			return this;
+		}
+
+		public Builder estadoActual(final boolean estadoActual) {
+			this.estadoActual = estadoActual;
 			return this;
 		}
 

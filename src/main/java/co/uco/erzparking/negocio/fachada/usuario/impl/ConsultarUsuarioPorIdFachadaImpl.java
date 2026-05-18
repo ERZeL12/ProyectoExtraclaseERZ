@@ -1,5 +1,7 @@
 package co.uco.erzparking.negocio.fachada.usuario.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
 import co.uco.erzparking.dto.CiudadDTO;
 import co.uco.erzparking.dto.TipoDocumentoIdentificacionDTO;
@@ -29,10 +31,15 @@ public class ConsultarUsuarioPorIdFachadaImpl implements ConsultarUsuarioPorIdFa
 			var tipoDocumentoIdentificacionDTO = resultado.getTipoDocumentoIdentificacion() != null
 					? new TipoDocumentoIdentificacionDTO.Builder()
 							.id(resultado.getTipoDocumentoIdentificacion().getId())
+							.nombreDocumentoIdentificacion(resultado.getTipoDocumentoIdentificacion().getNombreDocumentoIdentificacion())
+							.descripcion(resultado.getTipoDocumentoIdentificacion().getDescripcion())
 							.build()
 					: null;
 			var ciudadDTO = resultado.getCiudad() != null
-					? new CiudadDTO.Builder().id(resultado.getCiudad().getId()).build()
+					? new CiudadDTO.Builder()
+							.id(resultado.getCiudad().getId())
+							.nombre(resultado.getCiudad().getNombre())
+							.build()
 					: null;
 				return new UsuarioDTO.Builder()
 					.id(resultado.getId())
@@ -52,6 +59,21 @@ public class ConsultarUsuarioPorIdFachadaImpl implements ConsultarUsuarioPorIdFa
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al procesar la solicitud", excepcion.getMessage());
 		} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new UsuarioDTO.Builder()
+					.id(UUID.fromString("5bc6e94a-de0a-4511-8142-f41a38a5fd01"))
+					.build();
+			var resultado = new ConsultarUsuarioPorIdFachadaImpl().ejecutar(filtro);
+			System.out.println("Usuario consultado: id=" + resultado.getId()
+					+ ", nombres=" + resultado.getPrimerNombre() + " " + resultado.getPrimerApellido()
+					+ ", correo=" + resultado.getCorreoElectronico());
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

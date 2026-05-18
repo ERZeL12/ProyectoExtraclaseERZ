@@ -9,10 +9,12 @@ public class TipoServicioDominio {
 
 	private UUID id;
 	private String nombreServicio;
+	private String descripcion;
 
 	private TipoServicioDominio(final Builder builder) {
 		setId(builder.id);
 		setNombreServicio(builder.nombreServicio);
+		setDescripcion(builder.descripcion);
 	}
 
 	public UUID getId() {
@@ -22,6 +24,10 @@ public class TipoServicioDominio {
 	public String getNombreServicio() {
 		return nombreServicio;
 	}
+	
+	public String getDescripcion() {
+	    return descripcion;
+	}
 
 	private void setId(final UUID id) {
 		this.id = UtilUUID.obtenerValorDefecto(id);
@@ -30,11 +36,16 @@ public class TipoServicioDominio {
 	private void setNombreServicio(final String nombreServicio) {
 		this.nombreServicio = UtilTexto.aplicarTrim(nombreServicio);
 	}
+	
+	private void setDescripcion(final String descripcion) {
+	    this.descripcion = UtilTexto.aplicarTrim(descripcion);
+	}
 
 	public static class Builder {
 
 		private UUID id;
 		private String nombreServicio;
+		private String descripcion;
 
 		public Builder id(final UUID id) {
 			this.id = UtilUUID.obtenerValorDefecto(id);
@@ -44,6 +55,11 @@ public class TipoServicioDominio {
 		public Builder nombreServicio(final String nombreServicio) {
 			this.nombreServicio = UtilTexto.aplicarTrim(nombreServicio);
 			return this;
+		}
+		
+		public Builder descripcion(final String descripcion) {
+		    this.descripcion = UtilTexto.aplicarTrim(descripcion);
+		    return this;
 		}
 
 		public TipoServicioDominio build() {

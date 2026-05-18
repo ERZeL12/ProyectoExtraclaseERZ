@@ -42,6 +42,7 @@ public class ConsultarTodosTarifasFachadaImpl implements ConsultarTodosTarifasFa
 				? new TipoVehiculoDTO.Builder()
 						.id(d.getTipoVehiculo().getId())
 						.nombreVehiculo(d.getTipoVehiculo().getNombreVehiculo())
+						.descripcion(d.getTipoVehiculo().getDescripcion())
 						.build()
 				: null;
 		var servicioDTO = d.getServicio() != null
@@ -58,6 +59,21 @@ public class ConsultarTodosTarifasFachadaImpl implements ConsultarTodosTarifasFa
 				.tipoVehiculo(tipoVehiculoDTO)
 				.servicio(servicioDTO)
 				.build();
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new TarifaDTO.Builder().build();
+			var resultado = new ConsultarTodosTarifasFachadaImpl().ejecutar(filtro);
+			System.out.println("Total tarifas encontradas: " + resultado.size());
+			resultado.forEach(t -> System.out.println(" - " + t.getId()
+					+ " | valor=" + t.getValorServicio()
+					+ " | inicio=" + t.getFechaInicioVigenciaTarifa()
+					+ " | fin=" + t.getFechaFinVigenciaTarifa()));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 }

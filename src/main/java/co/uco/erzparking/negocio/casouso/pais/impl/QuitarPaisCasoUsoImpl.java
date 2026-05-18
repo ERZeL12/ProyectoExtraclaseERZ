@@ -3,6 +3,8 @@ package co.uco.erzparking.negocio.casouso.pais.impl;
 import java.util.UUID;
 
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
+import co.uco.erzparking.entidad.DepartamentoEntidad;
+import co.uco.erzparking.entidad.PaisEntidad;
 import co.uco.erzparking.negocio.casouso.pais.QuitarPaisCasoUso;
 import co.uco.erzparking.negocio.dominio.PaisDominio;
 import co.uco.erzparking.transversal.UtilObjeto;
@@ -21,6 +23,7 @@ public class QuitarPaisCasoUsoImpl implements QuitarPaisCasoUso {
 	public void ejecutar(final PaisDominio datos) {
 		validarIntegridadDatos(datos);
 		validarExiste(datos.getId());
+		validarSinDependencias(datos.getId());
 		quitar(datos);
 	}
 
@@ -36,6 +39,14 @@ public class QuitarPaisCasoUsoImpl implements QuitarPaisCasoUso {
 	private void validarExiste(final UUID id) {
 		if (UtilObjeto.esNulo(daoFactory.getPaisDAO().consultarPorId(id))) {
 			throw ERZParkingExcepcion.crear("El pais no existe en el sistema");
+		}
+	}
+
+	private void validarSinDependencias(final UUID id) {
+		var pais = new PaisEntidad.Builder().id(id).build();
+		var departamentos = daoFactory.getDepartamentoDAO().consultarPorFiltro(new DepartamentoEntidad.Builder().pais(pais).build());
+		if (!departamentos.isEmpty()) {
+			throw ERZParkingExcepcion.crear("No se puede eliminar el pais porque tiene departamentos asociados");
 		}
 	}
 

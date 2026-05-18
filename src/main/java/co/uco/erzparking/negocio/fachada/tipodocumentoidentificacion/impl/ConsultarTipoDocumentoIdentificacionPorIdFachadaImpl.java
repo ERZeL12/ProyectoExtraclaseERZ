@@ -1,5 +1,7 @@
 package co.uco.erzparking.negocio.fachada.tipodocumentoidentificacion.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
 import co.uco.erzparking.dto.TipoDocumentoIdentificacionDTO;
 import co.uco.erzparking.negocio.casouso.tipodocumentoidentificacion.ConsultarTipoDocumentoIdentificacionPorIdCasoUso;
@@ -35,6 +37,21 @@ public class ConsultarTipoDocumentoIdentificacionPorIdFachadaImpl implements Con
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al procesar la solicitud", excepcion.getMessage());
 		} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new TipoDocumentoIdentificacionDTO.Builder()
+					.id(UUID.fromString("d6843f94-2ed3-47ff-b903-e7445142c816"))
+					.build();
+			var resultado = new ConsultarTipoDocumentoIdentificacionPorIdFachadaImpl().ejecutar(filtro);
+			System.out.println("TipoDocumentoIdentificacion consultado: id=" + resultado.getId()
+					+ ", nombre=" + resultado.getNombreDocumentoIdentificacion()
+					+ ", descripcion=" + resultado.getDescripcion());
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

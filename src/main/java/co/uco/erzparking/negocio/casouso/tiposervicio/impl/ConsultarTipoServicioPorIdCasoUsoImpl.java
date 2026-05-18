@@ -38,6 +38,7 @@ public class ConsultarTipoServicioPorIdCasoUsoImpl implements ConsultarTipoServi
 		return new TipoServicioDominio.Builder()
 				.id(entidad.getId())
 				.nombreServicio(entidad.getNombreServicio())
+				.descripcion(entidad.getDescripcion())
 				.build();
 	}
 }

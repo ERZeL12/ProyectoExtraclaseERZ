@@ -66,7 +66,7 @@ public class ParqueaderoSQLServerDAO extends SQLDAO implements ParqueaderoDAO {
 
 	@Override
 	public ParqueaderoEntidad consultarPorId(final UUID id) {
-		final String sql = "SELECT p.id, p.nombreEstablecimiento, p.numeroTelefonico, p.correoElectronico, p.direccionEstablecimiento, c.id as ciudad_id "
+		final String sql = "SELECT p.id, p.nombreEstablecimiento, p.numeroTelefonico, p.correoElectronico, p.direccionEstablecimiento, c.id as ciudad_id, c.nombre as ciudad_nombre "
 				+ "FROM Parqueadero p INNER JOIN Ciudad c ON p.ciudad_id = c.id WHERE p.id = ?";
 		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
 			ps.setString(1, id.toString());
@@ -89,13 +89,19 @@ public class ParqueaderoSQLServerDAO extends SQLDAO implements ParqueaderoDAO {
 	@Override
 	public List<ParqueaderoEntidad> consultarPorFiltro(final ParqueaderoEntidad filtro) {
 		final StringBuilder sql = new StringBuilder(
-				"SELECT p.id, p.nombreEstablecimiento, p.numeroTelefonico, p.correoElectronico, p.direccionEstablecimiento, c.id as ciudad_id "
+				"SELECT p.id, p.nombreEstablecimiento, p.numeroTelefonico, p.correoElectronico, p.direccionEstablecimiento, c.id as ciudad_id, c.nombre as ciudad_nombre "
 				+ "FROM Parqueadero p INNER JOIN Ciudad c ON p.ciudad_id = c.id WHERE 1=1");
 		final List<Object> parametros = new ArrayList<>();
 
-		if (!UtilObjeto.esNulo(filtro) && !UtilTexto.esNula(filtro.getNombreEstablecimiento()) && !filtro.getNombreEstablecimiento().isEmpty()) {
-			sql.append(" AND p.nombreEstablecimiento LIKE ?");
-			parametros.add("%" + filtro.getNombreEstablecimiento() + "%");
+		if (!UtilObjeto.esNulo(filtro)) {
+			if (!UtilTexto.esNula(filtro.getNombreEstablecimiento()) && !filtro.getNombreEstablecimiento().isEmpty()) {
+				sql.append(" AND p.nombreEstablecimiento LIKE ?");
+				parametros.add("%" + filtro.getNombreEstablecimiento() + "%");
+			}
+			if (!UtilObjeto.esNulo(filtro.getCiudad()) && !UtilObjeto.esNulo(filtro.getCiudad().getId())) {
+				sql.append(" AND p.ciudad_id = ?");
+				parametros.add(filtro.getCiudad().getId().toString());
+			}
 		}
 
 		final List<ParqueaderoEntidad> resultados = new ArrayList<>();
@@ -117,6 +123,7 @@ public class ParqueaderoSQLServerDAO extends SQLDAO implements ParqueaderoDAO {
 	private ParqueaderoEntidad construirParqueaderoEntidad(final ResultSet rs) throws SQLException {
 		var ciudad = new CiudadEntidad.Builder()
 				.id(UUID.fromString(rs.getString("ciudad_id")))
+				.nombre(rs.getString("ciudad_nombre"))
 				.build();
 		return new ParqueaderoEntidad.Builder()
 				.id(UUID.fromString(rs.getString("id")))

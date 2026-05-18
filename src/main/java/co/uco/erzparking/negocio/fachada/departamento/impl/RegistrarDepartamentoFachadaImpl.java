@@ -25,7 +25,7 @@ public class RegistrarDepartamentoFachadaImpl implements RegistrarDepartamentoFa
 	@Override
 	public void ejecutar(final DepartamentoDTO datos) {
 	    try {
-
+	        daoFactory.iniciarTransaccion();
 	        var dominio = new DepartamentoDominio.Builder()
 	                .id(datos.getId())
 	                .nombre(datos.getNombre())

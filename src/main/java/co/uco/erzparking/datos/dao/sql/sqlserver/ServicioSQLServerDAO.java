@@ -25,12 +25,13 @@ public class ServicioSQLServerDAO extends SQLDAO implements ServicioDAO {
 
 	@Override
 	public void crear(final ServicioEntidad entidad) {
-		final String sql = "INSERT INTO Servicio (id, nombreServicio, tipoServicio_id, parqueadero_id) VALUES (?, ?, ?, ?)";
+		final String sql = "INSERT INTO Servicio (id, nombreServicio, tipoServicio_id, parqueadero_id, estadoActual) VALUES (?, ?, ?, ?, ?)";
 		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
 			ps.setString(1, entidad.getId().toString());
 			ps.setString(2, entidad.getNombreServicio());
 			ps.setString(3, entidad.getTipoServicio().getId().toString());
 			ps.setString(4, entidad.getParqueadero().getId().toString());
+			ps.setBoolean(5, entidad.isEstadoActual());
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw ERZParkingExcepcion.crear(e, "Error al crear el servicio", "Error al crear el servicio");
@@ -39,13 +40,26 @@ public class ServicioSQLServerDAO extends SQLDAO implements ServicioDAO {
 
 	@Override
 	public void actualizar(final UUID id, final ServicioEntidad entidad) {
-		final String sql = "UPDATE Servicio SET nombreServicio = ? WHERE id = ?";
+		final String sql = "UPDATE Servicio SET nombreServicio = ?, estadoActual = ? WHERE id = ?";
 		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
 			ps.setString(1, entidad.getNombreServicio());
-			ps.setString(2, id.toString());
+			ps.setBoolean(2, entidad.isEstadoActual());
+			ps.setString(3, id.toString());
 			ps.executeUpdate();
 		} catch (SQLException e) {
 			throw ERZParkingExcepcion.crear(e, "Error al actualizar el servicio", "Error al actualizar el servicio");
+		}
+	}
+
+	@Override
+	public void cambiarEstadoActual(final UUID id, final boolean nuevoEstado) {
+		final String sql = "UPDATE Servicio SET estadoActual = ? WHERE id = ?";
+		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
+			ps.setBoolean(1, nuevoEstado);
+			ps.setString(2, id.toString());
+			ps.executeUpdate();
+		} catch (SQLException e) {
+			throw ERZParkingExcepcion.crear(e, "Error al cambiar el estado del servicio", "SQLException al cambiar estadoActual en tabla Servicio: " + e.getMessage());
 		}
 	}
 
@@ -62,7 +76,9 @@ public class ServicioSQLServerDAO extends SQLDAO implements ServicioDAO {
 
 	@Override
 	public ServicioEntidad consultarPorId(final UUID id) {
-		final String sql = "SELECT s.id, s.nombreServicio, ts.id as tipoServicio_id, ts.nombreServicio as nombreTipoServicio, p.id as parqueadero_id "
+		final String sql = "SELECT s.id, s.nombreServicio, s.estadoActual, "
+				+ "ts.id as tipoServicio_id, ts.nombreServicio as nombreTipoServicio, "
+				+ "p.id as parqueadero_id, p.nombreEstablecimiento as parqueadero_nombre, p.direccionEstablecimiento as parqueadero_direccion "
 				+ "FROM Servicio s "
 				+ "INNER JOIN TipoServicio ts ON s.tipoServicio_id = ts.id "
 				+ "INNER JOIN Parqueadero p ON s.parqueadero_id = p.id "
@@ -88,7 +104,9 @@ public class ServicioSQLServerDAO extends SQLDAO implements ServicioDAO {
 	@Override
 	public List<ServicioEntidad> consultarPorFiltro(final ServicioEntidad filtro) {
 		final StringBuilder sql = new StringBuilder(
-				"SELECT s.id, s.nombreServicio, ts.id as tipoServicio_id, ts.nombreServicio as nombreTipoServicio, p.id as parqueadero_id "
+				"SELECT s.id, s.nombreServicio, s.estadoActual, "
+				+ "ts.id as tipoServicio_id, ts.nombreServicio as nombreTipoServicio, "
+				+ "p.id as parqueadero_id, p.nombreEstablecimiento as parqueadero_nombre, p.direccionEstablecimiento as parqueadero_direccion "
 				+ "FROM Servicio s "
 				+ "INNER JOIN TipoServicio ts ON s.tipoServicio_id = ts.id "
 				+ "INNER JOIN Parqueadero p ON s.parqueadero_id = p.id "
@@ -99,6 +117,14 @@ public class ServicioSQLServerDAO extends SQLDAO implements ServicioDAO {
 			if (!UtilTexto.esNula(filtro.getNombreServicio()) && !filtro.getNombreServicio().isEmpty()) {
 				sql.append(" AND s.nombreServicio LIKE ?");
 				parametros.add("%" + filtro.getNombreServicio() + "%");
+			}
+			if (!UtilObjeto.esNulo(filtro.getParqueadero()) && !UtilObjeto.esNulo(filtro.getParqueadero().getId())) {
+				sql.append(" AND s.parqueadero_id = ?");
+				parametros.add(filtro.getParqueadero().getId().toString());
+			}
+			if (!UtilObjeto.esNulo(filtro.getTipoServicio()) && !UtilObjeto.esNulo(filtro.getTipoServicio().getId())) {
+				sql.append(" AND s.tipoServicio_id = ?");
+				parametros.add(filtro.getTipoServicio().getId().toString());
 			}
 		}
 
@@ -125,12 +151,15 @@ public class ServicioSQLServerDAO extends SQLDAO implements ServicioDAO {
 				.build();
 		var parqueadero = new ParqueaderoEntidad.Builder()
 				.id(UUID.fromString(rs.getString("parqueadero_id")))
+				.nombreEstablecimiento(rs.getString("parqueadero_nombre"))
+				.direccionEstablecimiento(rs.getString("parqueadero_direccion"))
 				.build();
 		return new ServicioEntidad.Builder()
 				.id(UUID.fromString(rs.getString("id")))
 				.nombreServicio(rs.getString("nombreServicio"))
 				.tipoServicio(tipoServicio)
 				.parqueadero(parqueadero)
+				.estadoActual(rs.getBoolean("estadoActual"))
 				.build();
 	}
 

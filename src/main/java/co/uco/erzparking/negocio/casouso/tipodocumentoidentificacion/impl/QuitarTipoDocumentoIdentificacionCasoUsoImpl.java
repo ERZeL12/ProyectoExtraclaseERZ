@@ -3,6 +3,9 @@ package co.uco.erzparking.negocio.casouso.tipodocumentoidentificacion.impl;
 import java.util.UUID;
 
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
+import co.uco.erzparking.entidad.OperarioEntidad;
+import co.uco.erzparking.entidad.TipoDocumentoIdentificacionEntidad;
+import co.uco.erzparking.entidad.UsuarioEntidad;
 import co.uco.erzparking.negocio.casouso.tipodocumentoidentificacion.QuitarTipoDocumentoIdentificacionCasoUso;
 import co.uco.erzparking.negocio.dominio.TipoDocumentoIdentificacionDominio;
 import co.uco.erzparking.transversal.UtilObjeto;
@@ -21,6 +24,7 @@ public class QuitarTipoDocumentoIdentificacionCasoUsoImpl implements QuitarTipoD
 	public void ejecutar(final TipoDocumentoIdentificacionDominio datos) {
 		validarIntegridadDatos(datos);
 		validarExiste(datos.getId());
+		validarSinDependencias(datos.getId());
 		quitar(datos);
 	}
 
@@ -36,6 +40,18 @@ public class QuitarTipoDocumentoIdentificacionCasoUsoImpl implements QuitarTipoD
 	private void validarExiste(final UUID id) {
 		if (UtilObjeto.esNulo(daoFactory.getTipoDocumentoIdentificacionDAO().consultarPorId(id))) {
 			throw ERZParkingExcepcion.crear("El tipoDocumentoIdentificacion no existe en el sistema");
+		}
+	}
+
+	private void validarSinDependencias(final UUID id) {
+		var tipoDocumento = new TipoDocumentoIdentificacionEntidad.Builder().id(id).build();
+		var usuarios = daoFactory.getUsuarioDAO().consultarPorFiltro(new UsuarioEntidad.Builder().tipoDocumentoIdentificacion(tipoDocumento).build());
+		if (!usuarios.isEmpty()) {
+			throw ERZParkingExcepcion.crear("No se puede eliminar el tipo de documento porque tiene usuarios asociados");
+		}
+		var operarios = daoFactory.getOperarioDAO().consultarPorFiltro(new OperarioEntidad.Builder().tipoDocumentoIdentificacion(tipoDocumento).build());
+		if (!operarios.isEmpty()) {
+			throw ERZParkingExcepcion.crear("No se puede eliminar el tipo de documento porque tiene operarios asociados");
 		}
 	}
 

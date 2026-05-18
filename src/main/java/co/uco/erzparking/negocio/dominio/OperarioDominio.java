@@ -18,6 +18,7 @@ public class OperarioDominio {
 	private long numeroTelefonico;
 	private CargoDominio cargo;
 	private ParqueaderoDominio parqueadero;
+	private boolean estadoActual;
 
 	private OperarioDominio(final Builder builder) {
 		setId(builder.id);
@@ -30,6 +31,7 @@ public class OperarioDominio {
 		setNumeroTelefonico(builder.numeroTelefonico);
 		setCargo(builder.cargo);
 		setParqueadero(builder.parqueadero);
+		setEstadoActual(builder.estadoActual);
 	}
 
 	public UUID getId() {
@@ -72,6 +74,10 @@ public class OperarioDominio {
 		return parqueadero;
 	}
 
+	public boolean isEstadoActual() {
+		return estadoActual;
+	}
+
 	private void setId(final UUID id) {
 		this.id = UtilUUID.obtenerValorDefecto(id);
 	}
@@ -81,7 +87,7 @@ public class OperarioDominio {
 	}
 
 	private void setNumeroIdentificacion(final String numeroIdentificacion) {
-		this.numeroIdentificacion = UtilTexto.aplicarTrim(numeroIdentificacion);
+		this.numeroIdentificacion = UtilTexto.eliminarEspaciosInternos(numeroIdentificacion);
 	}
 
 	private void setPrimerNombre(final String primerNombre) {
@@ -112,6 +118,10 @@ public class OperarioDominio {
 		this.parqueadero = UtilObjeto.obtenerValorDefecto(parqueadero, null);
 	}
 
+	private void setEstadoActual(final boolean estadoActual) {
+		this.estadoActual = estadoActual;
+	}
+
 	public static class Builder {
 
 		private UUID id;
@@ -124,6 +134,7 @@ public class OperarioDominio {
 		private long numeroTelefonico;
 		private CargoDominio cargo;
 		private ParqueaderoDominio parqueadero;
+		private boolean estadoActual = true;
 
 		public Builder id(final UUID id) {
 			this.id = UtilUUID.obtenerValorDefecto(id);
@@ -136,7 +147,7 @@ public class OperarioDominio {
 		}
 
 		public Builder numeroIdentificacion(final String numeroIdentificacion) {
-			this.numeroIdentificacion = UtilTexto.aplicarTrim(numeroIdentificacion);
+			this.numeroIdentificacion = UtilTexto.eliminarEspaciosInternos(numeroIdentificacion);
 			return this;
 		}
 
@@ -172,6 +183,11 @@ public class OperarioDominio {
 
 		public Builder parqueadero(final ParqueaderoDominio parqueadero) {
 			this.parqueadero = parqueadero;
+			return this;
+		}
+
+		public Builder estadoActual(final boolean estadoActual) {
+			this.estadoActual = estadoActual;
 			return this;
 		}
 

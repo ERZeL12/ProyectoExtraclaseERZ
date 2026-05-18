@@ -12,12 +12,14 @@ public class ServicioEntidad {
 	private String nombreServicio;
 	private TipoServicioEntidad tipoServicio;
 	private ParqueaderoEntidad parqueadero;
+	private boolean estadoActual;
 
 	private ServicioEntidad(final Builder builder) {
 		setId(builder.id);
 		setNombreServicio(builder.nombreServicio);
 		setTipoServicio(builder.tipoServicio);
 		setParqueadero(builder.parqueadero);
+		setEstadoActual(builder.estadoActual);
 	}
 
 	public UUID getId() {
@@ -36,6 +38,10 @@ public class ServicioEntidad {
 		return parqueadero;
 	}
 
+	public boolean isEstadoActual() {
+		return estadoActual;
+	}
+
 	private void setId(final UUID id) {
 		this.id = UtilUUID.obtenerValorDefecto(id);
 	}
@@ -52,12 +58,17 @@ public class ServicioEntidad {
 		this.parqueadero = UtilObjeto.obtenerValorDefecto(parqueadero, null);
 	}
 
+	private void setEstadoActual(final boolean estadoActual) {
+		this.estadoActual = estadoActual;
+	}
+
 	public static class Builder {
 
 		private UUID id;
 		private String nombreServicio;
 		private TipoServicioEntidad tipoServicio;
 		private ParqueaderoEntidad parqueadero;
+		private boolean estadoActual = true;
 
 		public Builder id(final UUID id) {
 			this.id = UtilUUID.obtenerValorDefecto(id);
@@ -76,6 +87,11 @@ public class ServicioEntidad {
 
 		public Builder parqueadero(final ParqueaderoEntidad parqueadero) {
 			this.parqueadero = parqueadero;
+			return this;
+		}
+
+		public Builder estadoActual(final boolean estadoActual) {
+			this.estadoActual = estadoActual;
 			return this;
 		}
 

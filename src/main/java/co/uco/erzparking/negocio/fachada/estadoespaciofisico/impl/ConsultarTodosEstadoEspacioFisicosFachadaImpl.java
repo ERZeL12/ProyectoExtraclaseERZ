@@ -42,4 +42,16 @@ public class ConsultarTodosEstadoEspacioFisicosFachadaImpl implements ConsultarT
 				.build();
 	}
 
+	public static void main(final String[] args) {
+		try {
+			var filtro = new EstadoEspacioFisicoDTO.Builder().build();
+			var resultado = new ConsultarTodosEstadoEspacioFisicosFachadaImpl().ejecutar(filtro);
+			System.out.println("Total estados espacio fisico encontrados: " + resultado.size());
+			resultado.forEach(e -> System.out.println(" - " + e.getId() + " | " + e.getNombreEstadoEspacioFisico()));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
 }

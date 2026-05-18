@@ -9,10 +9,18 @@ public class TipoServicioDTO {
 
 	private UUID id;
 	private String nombreServicio;
+	private String descripcion;
+
+	public TipoServicioDTO() {
+		setId(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+		setNombreServicio("");
+		setDescripcion("");
+	}
 
 	private TipoServicioDTO(final Builder builder) {
 		setId(builder.id);
 		setNombreServicio(builder.nombreServicio);
+		setDescripcion(builder.descripcion);
 	}
 
 	public UUID getId() {
@@ -23,6 +31,10 @@ public class TipoServicioDTO {
 		return nombreServicio;
 	}
 
+	public String getDescripcion() {
+	    return descripcion;
+	}
+	
 	private void setId(final UUID id) {
 		this.id = UtilUUID.obtenerValorDefecto(id);
 	}
@@ -30,11 +42,16 @@ public class TipoServicioDTO {
 	private void setNombreServicio(final String nombreServicio) {
 		this.nombreServicio = UtilTexto.aplicarTrim(nombreServicio);
 	}
+	
+	private void setDescripcion(final String descripcion) {
+	    this.descripcion = UtilTexto.aplicarTrim(descripcion);
+	}
 
 	public static class Builder {
 
 		private UUID id;
 		private String nombreServicio;
+		private String descripcion;
 
 		public Builder id(final UUID id) {
 			this.id = UtilUUID.obtenerValorDefecto(id);
@@ -44,6 +61,11 @@ public class TipoServicioDTO {
 		public Builder nombreServicio(final String nombreServicio) {
 			this.nombreServicio = UtilTexto.aplicarTrim(nombreServicio);
 			return this;
+		}
+		
+		public Builder descripcion(final String descripcion) {
+		    this.descripcion = UtilTexto.aplicarTrim(descripcion);
+		    return this;
 		}
 
 		public TipoServicioDTO build() {

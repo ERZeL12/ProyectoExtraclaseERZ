@@ -1,6 +1,9 @@
 package co.uco.erzparking.negocio.fachada.operario.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
+import co.uco.erzparking.dto.CargoDTO;
 import co.uco.erzparking.dto.OperarioDTO;
 import co.uco.erzparking.negocio.casouso.operario.ActualizarOperarioCasoUso;
 import co.uco.erzparking.negocio.casouso.operario.impl.ActualizarOperarioCasoUsoImpl;
@@ -45,6 +48,27 @@ public class ActualizarOperarioFachadaImpl implements ActualizarOperarioFachada 
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al actualizar el operario", excepcion.getMessage());
 		} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var dto = new OperarioDTO.Builder()
+					.id(UUID.fromString("4318b80c-b391-490c-a49e-e94dc3efd7c0"))
+					.primerNombre("Pedro")
+					.segundoNombre("Andres")
+					.primerApellido("Ramirez")
+					.segundoApellido("Lopez")
+					.numeroTelefonico(3017654321L)
+					.cargo(new CargoDTO.Builder()
+							.id(UUID.fromString("19108fe6-14ef-4e90-8baa-5a607def5b3d"))
+							.build())
+					.build();
+			new ActualizarOperarioFachadaImpl().ejecutar(dto);
+			System.out.println("Operario actualizado exitosamente.");
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

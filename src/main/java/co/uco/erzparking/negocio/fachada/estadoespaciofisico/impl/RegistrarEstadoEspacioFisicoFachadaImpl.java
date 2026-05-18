@@ -21,7 +21,7 @@ public class RegistrarEstadoEspacioFisicoFachadaImpl implements RegistrarEstadoE
 	@Override
 	public void ejecutar(final EstadoEspacioFisicoDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new EstadoEspacioFisicoDominio.Builder()
 					.id(datos.getId())
 					.nombreEstadoEspacioFisico(datos.getNombreEstadoEspacioFisico())

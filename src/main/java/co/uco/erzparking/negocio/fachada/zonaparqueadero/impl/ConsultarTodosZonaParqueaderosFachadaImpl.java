@@ -38,13 +38,28 @@ public class ConsultarTodosZonaParqueaderosFachadaImpl implements ConsultarTodos
 
 	private ZonaParqueaderoDTO mapearADto(final ZonaParqueaderoDominio d) {
 		var parqueaderoDTO = d.getParqueadero() != null
-				? new ParqueaderoDTO.Builder().id(d.getParqueadero().getId()).build()
+				? new ParqueaderoDTO.Builder()
+						.id(d.getParqueadero().getId())
+						.nombreEstablecimiento(d.getParqueadero().getNombreEstablecimiento())
+						.build()
 				: null;
 		return new ZonaParqueaderoDTO.Builder()
 				.id(d.getId())
 				.nombreZona(d.getNombreZona())
 				.parqueadero(parqueaderoDTO)
 				.build();
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new ZonaParqueaderoDTO.Builder().build();
+			var resultado = new ConsultarTodosZonaParqueaderosFachadaImpl().ejecutar(filtro);
+			System.out.println("Total zonas parqueadero encontradas: " + resultado.size());
+			resultado.forEach(z -> System.out.println(" - " + z.getId() + " | " + z.getNombreZona()));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 }

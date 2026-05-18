@@ -1,6 +1,20 @@
 package co.uco.erzparking.controlador;
 
-import co.uco.erzparking.controlador.dto.Respuesta;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import co.uco.erzparking.controlador.dto.RespuestaExito;
 import co.uco.erzparking.dto.ZonaParqueaderoDTO;
 import co.uco.erzparking.negocio.fachada.zonaparqueadero.ActualizarZonaParqueaderoFachada;
 import co.uco.erzparking.negocio.fachada.zonaparqueadero.ConsultarTodosZonaParqueaderosFachada;
@@ -12,121 +26,57 @@ import co.uco.erzparking.negocio.fachada.zonaparqueadero.impl.ConsultarTodosZona
 import co.uco.erzparking.negocio.fachada.zonaparqueadero.impl.ConsultarZonaParqueaderoPorIdFachadaImpl;
 import co.uco.erzparking.negocio.fachada.zonaparqueadero.impl.QuitarZonaParqueaderoFachadaImpl;
 import co.uco.erzparking.negocio.fachada.zonaparqueadero.impl.RegistrarZonaParqueaderoFachadaImpl;
-import co.uco.erzparking.transversal.excepcion.ERZParkingExcepcion;
-import java.util.List;
-import java.util.UUID;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/erzparking/v1/zonasparqueadero")
 public class ZonaParqueaderoControlador {
 
 	@PostMapping
-	public ResponseEntity<Respuesta<ZonaParqueaderoDTO>> registrar(@RequestBody ZonaParqueaderoDTO datos) {
-		Respuesta<ZonaParqueaderoDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			RegistrarZonaParqueaderoFachada fachada = new RegistrarZonaParqueaderoFachadaImpl();
-			fachada.ejecutar(datos);
-			respuesta.agregarMensaje("ZonaParqueadero registrado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<String>> registrarNuevaZonaParqueadero(@RequestBody ZonaParqueaderoDTO zona) {
+		RegistrarZonaParqueaderoFachada fachada = new RegistrarZonaParqueaderoFachadaImpl();
+		fachada.ejecutar(zona);
+
+		return new ResponseEntity<>(RespuestaExito.crear("La zona de parqueadero se ha registrado exitosamente.", ""), HttpStatus.OK);
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Respuesta<ZonaParqueaderoDTO>> actualizar(@PathVariable UUID id, @RequestBody ZonaParqueaderoDTO datos) {
-		Respuesta<ZonaParqueaderoDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			var datosConId = new ZonaParqueaderoDTO.Builder().id(id).build();
-			ActualizarZonaParqueaderoFachada fachada = new ActualizarZonaParqueaderoFachadaImpl();
-			fachada.ejecutar(datosConId);
-			respuesta.agregarMensaje("ZonaParqueadero actualizado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<String>> modificarInformacionZonaParqueaderoExistente(@PathVariable UUID id, @RequestBody ZonaParqueaderoDTO zona) {
+		var zonaConId = new ZonaParqueaderoDTO.Builder()
+				.id(id)
+				.nombreZona(zona.getNombreZona())
+				.parqueadero(zona.getParqueadero())
+				.build();
+
+		ActualizarZonaParqueaderoFachada fachada = new ActualizarZonaParqueaderoFachadaImpl();
+		fachada.ejecutar(zonaConId);
+
+		return new ResponseEntity<>(RespuestaExito.crear("La zona de parqueadero se ha actualizado exitosamente.", ""), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Respuesta<ZonaParqueaderoDTO>> quitar(@PathVariable UUID id) {
-		Respuesta<ZonaParqueaderoDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			var datos = new ZonaParqueaderoDTO.Builder().id(id).build();
-			QuitarZonaParqueaderoFachada fachada = new QuitarZonaParqueaderoFachadaImpl();
-			fachada.ejecutar(datos);
-			respuesta.agregarMensaje("ZonaParqueadero eliminado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<String>> darDeBajaZonaParqueaderoExistente(@PathVariable UUID id) {
+		var zona = new ZonaParqueaderoDTO.Builder().id(id).build();
+		QuitarZonaParqueaderoFachada fachada = new QuitarZonaParqueaderoFachadaImpl();
+		fachada.ejecutar(zona);
+
+		return new ResponseEntity<>(RespuestaExito.crear("La zona de parqueadero se ha eliminado exitosamente.", ""), HttpStatus.OK);
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Respuesta<ZonaParqueaderoDTO>> consultarPorId(@PathVariable UUID id) {
-		Respuesta<ZonaParqueaderoDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			var datos = new ZonaParqueaderoDTO.Builder().id(id).build();
-			ConsultarZonaParqueaderoPorIdFachada fachada = new ConsultarZonaParqueaderoPorIdFachadaImpl();
-			var resultado = fachada.ejecutar(datos);
-			respuesta.setDatos(List.of(resultado));
-			respuesta.agregarMensaje("ZonaParqueadero consultado exitosamente");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<ZonaParqueaderoDTO>> consultarZonaParqueaderoPorId(@PathVariable UUID id) {
+		var zona = new ZonaParqueaderoDTO.Builder().id(id).build();
+		ConsultarZonaParqueaderoPorIdFachada fachada = new ConsultarZonaParqueaderoPorIdFachadaImpl();
+		var resultado = fachada.ejecutar(zona);
+
+		return new ResponseEntity<>(RespuestaExito.crear("La zona de parqueadero se ha consultado exitosamente.", resultado), HttpStatus.OK);
 	}
 
 	@GetMapping
-	public ResponseEntity<Respuesta<ZonaParqueaderoDTO>> consultarTodos() {
-		Respuesta<ZonaParqueaderoDTO> respuesta = Respuesta.crearRespuestaExitosa();
-		HttpStatusCode codigoEstado = HttpStatus.OK;
-		try {
-			ConsultarTodosZonaParqueaderosFachada fachada = new ConsultarTodosZonaParqueaderosFachadaImpl();
-			var resultados = fachada.ejecutar(new ZonaParqueaderoDTO.Builder().build());
-			respuesta.setDatos(resultados);
-			respuesta.agregarMensaje("Consulta exitosa");
-		} catch (ERZParkingExcepcion excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje(excepcion.getMensajeUsuario());
-			codigoEstado = HttpStatus.BAD_REQUEST;
-		} catch (Exception excepcion) {
-			respuesta = Respuesta.crearRespuestaFallida();
-			respuesta.agregarMensaje("Se presento un error inesperado");
-			codigoEstado = HttpStatus.INTERNAL_SERVER_ERROR;
-		}
-		return new ResponseEntity<>(respuesta, codigoEstado);
+	public ResponseEntity<RespuestaExito<List<ZonaParqueaderoDTO>>> consultarZonasParqueadero() {
+		ConsultarTodosZonaParqueaderosFachada fachada = new ConsultarTodosZonaParqueaderosFachadaImpl();
+		var resultado = fachada.ejecutar(new ZonaParqueaderoDTO.Builder().build());
+
+		return new ResponseEntity<>(RespuestaExito.crear("Zonas de parqueadero consultadas exitosamente.", resultado), HttpStatus.OK);
 	}
 
 }

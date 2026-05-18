@@ -21,7 +21,7 @@ public class RegistrarUsuarioVehiculoFachadaImpl implements RegistrarUsuarioVehi
 	@Override
 	public void ejecutar(final UsuarioVehiculoDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new UsuarioVehiculoDominio.Builder()
 					.id(datos.getId())
 					.usuario(datos.getUsuario() != null ? new co.uco.erzparking.negocio.dominio.UsuarioDominio.Builder().id(datos.getUsuario().getId()).build() : null)

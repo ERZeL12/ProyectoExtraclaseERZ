@@ -23,6 +23,7 @@ public class ActualizarOperarioCasoUsoImpl implements ActualizarOperarioCasoUso 
 	public void ejecutar(final OperarioDominio datos) {
 		validarIntegridadDatos(datos);
 		validarExiste(datos.getId());
+		validarCargoActivo(datos);
 		actualizar(datos);
 	}
 
@@ -50,7 +51,18 @@ public class ActualizarOperarioCasoUsoImpl implements ActualizarOperarioCasoUso 
 		}
 	}
 
+	private void validarCargoActivo(final OperarioDominio datos) {
+		var cargo = daoFactory.getCargoDAO().consultarPorId(datos.getCargo().getId());
+		if (UtilObjeto.esNulo(cargo)) {
+			throw ERZParkingExcepcion.crear("El cargo asociado no existe en el sistema");
+		}
+		if (!cargo.isEstadoActual()) {
+			throw ERZParkingExcepcion.crear("El cargo debe estar activo para asignarlo al operario");
+		}
+	}
+
 	private void actualizar(final OperarioDominio datos) {
+		var existente = daoFactory.getOperarioDAO().consultarPorId(datos.getId());
 		var cargo = new CargoEntidad.Builder()
 				.id(datos.getCargo().getId())
 				.build();
@@ -62,6 +74,7 @@ public class ActualizarOperarioCasoUsoImpl implements ActualizarOperarioCasoUso 
 				.segundoApellido(datos.getSegundoApellido())
 				.numeroTelefonico(datos.getNumeroTelefonico())
 				.cargo(cargo)
+				.estadoActual(existente.isEstadoActual())
 				.build();
 		daoFactory.getOperarioDAO().actualizar(datos.getId(), entidad);
 	}

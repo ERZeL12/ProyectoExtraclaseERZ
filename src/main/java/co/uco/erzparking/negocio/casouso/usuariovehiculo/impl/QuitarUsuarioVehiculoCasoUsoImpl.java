@@ -3,6 +3,8 @@ package co.uco.erzparking.negocio.casouso.usuariovehiculo.impl;
 import java.util.UUID;
 
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
+import co.uco.erzparking.entidad.ContratoMensualidadEntidad;
+import co.uco.erzparking.entidad.UsuarioVehiculoEntidad;
 import co.uco.erzparking.negocio.casouso.usuariovehiculo.QuitarUsuarioVehiculoCasoUso;
 import co.uco.erzparking.negocio.dominio.UsuarioVehiculoDominio;
 import co.uco.erzparking.transversal.UtilObjeto;
@@ -21,6 +23,7 @@ public class QuitarUsuarioVehiculoCasoUsoImpl implements QuitarUsuarioVehiculoCa
 	public void ejecutar(final UsuarioVehiculoDominio datos) {
 		validarIntegridadDatos(datos);
 		validarExiste(datos.getId());
+		validarSinDependencias(datos.getId());
 		quitar(datos);
 	}
 
@@ -36,6 +39,14 @@ public class QuitarUsuarioVehiculoCasoUsoImpl implements QuitarUsuarioVehiculoCa
 	private void validarExiste(final UUID id) {
 		if (UtilObjeto.esNulo(daoFactory.getUsuarioVehiculoDAO().consultarPorId(id))) {
 			throw ERZParkingExcepcion.crear("El usuarioVehiculo no existe en el sistema");
+		}
+	}
+
+	private void validarSinDependencias(final UUID id) {
+		var usuarioVehiculo = new UsuarioVehiculoEntidad.Builder().id(id).build();
+		var contratos = daoFactory.getContratoMensualidadDAO().consultarPorFiltro(new ContratoMensualidadEntidad.Builder().usuarioVehiculo(usuarioVehiculo).build());
+		if (!contratos.isEmpty()) {
+			throw ERZParkingExcepcion.crear("No se puede eliminar la asociacion porque tiene contratos de mensualidad asociados");
 		}
 	}
 

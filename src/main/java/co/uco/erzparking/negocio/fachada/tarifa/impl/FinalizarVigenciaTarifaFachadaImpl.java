@@ -1,5 +1,7 @@
 package co.uco.erzparking.negocio.fachada.tarifa.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
 import co.uco.erzparking.dto.TarifaDTO;
 import co.uco.erzparking.negocio.casouso.tarifa.FinalizarVigenciaTarifaCasoUso;
@@ -21,7 +23,7 @@ public class FinalizarVigenciaTarifaFachadaImpl implements FinalizarVigenciaTari
 	@Override
 	public void ejecutar(final TarifaDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new TarifaDominio.Builder().id(datos.getId()).build();
 			casoUso.ejecutar(dominio);
 			daoFactory.confirmarTransaccion();
@@ -33,6 +35,19 @@ public class FinalizarVigenciaTarifaFachadaImpl implements FinalizarVigenciaTari
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al procesar la solicitud", excepcion.getMessage());
 				} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var dto = new TarifaDTO.Builder()
+					.id(UUID.fromString("2addbabd-1197-48f7-9bec-4b967b51be9c"))
+					.build();
+			new FinalizarVigenciaTarifaFachadaImpl().ejecutar(dto);
+			System.out.println("Vigencia de tarifa finalizada exitosamente.");
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

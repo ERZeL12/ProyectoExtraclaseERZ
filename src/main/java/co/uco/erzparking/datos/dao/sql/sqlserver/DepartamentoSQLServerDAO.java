@@ -85,9 +85,15 @@ public class DepartamentoSQLServerDAO extends SQLDAO implements DepartamentoDAO 
 		final StringBuilder sql = new StringBuilder("SELECT d.id, d.nombre, p.id as pais_id, p.nombre as pais_nombre FROM Departamento d INNER JOIN Pais p ON d.pais_id = p.id WHERE 1=1");
 		final List<Object> parametros = new ArrayList<>();
 
-		if (!UtilObjeto.esNulo(filtro) && !UtilTexto.esNula(filtro.getNombre()) && !filtro.getNombre().isEmpty()) {
-			sql.append(" AND d.nombre LIKE ?");
-			parametros.add("%" + filtro.getNombre() + "%");
+		if (!UtilObjeto.esNulo(filtro)) {
+			if (!UtilTexto.esNula(filtro.getNombre()) && !filtro.getNombre().isEmpty()) {
+				sql.append(" AND d.nombre LIKE ?");
+				parametros.add("%" + filtro.getNombre() + "%");
+			}
+			if (!UtilObjeto.esNulo(filtro.getPais()) && !UtilObjeto.esNulo(filtro.getPais().getId())) {
+				sql.append(" AND d.pais_id = ?");
+				parametros.add(filtro.getPais().getId().toString());
+			}
 		}
 
 		final List<DepartamentoEntidad> resultados = new ArrayList<>();

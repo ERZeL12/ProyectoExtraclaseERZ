@@ -1,5 +1,7 @@
 package co.uco.erzparking.negocio.fachada.departamento.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
 import co.uco.erzparking.dto.DepartamentoDTO;
 import co.uco.erzparking.dto.PaisDTO;
@@ -42,6 +44,20 @@ public class ConsultarDepartamentoPorIdFachadaImpl implements ConsultarDepartame
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al procesar la solicitud", excepcion.getMessage());
 		} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new DepartamentoDTO.Builder()
+					.id(UUID.fromString("1f8a1ad3-3c61-4b6b-8ebd-e109aee6beb9"))
+					.build();
+			var resultado = new ConsultarDepartamentoPorIdFachadaImpl().ejecutar(filtro);
+			System.out.println("Departamento consultado: id=" + resultado.getId() + ", nombre=" + resultado.getNombre()
+					+ ", pais=" + (resultado.getPais() != null ? resultado.getPais().getNombre() : "(sin pais)"));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

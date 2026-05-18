@@ -15,6 +15,7 @@ public class TarifaEntidad {
 	private Date fechaFinVigenciaTarifa;
 	private TipoVehiculoEntidad tipoVehiculo;
 	private ServicioEntidad servicio;
+	private boolean estadoActual;
 
 	private TarifaEntidad(final Builder builder) {
 		setId(builder.id);
@@ -23,6 +24,7 @@ public class TarifaEntidad {
 		setFechaFinVigenciaTarifa(builder.fechaFinVigenciaTarifa);
 		setTipoVehiculo(builder.tipoVehiculo);
 		setServicio(builder.servicio);
+		setEstadoActual(builder.estadoActual);
 	}
 
 	public UUID getId() {
@@ -49,6 +51,10 @@ public class TarifaEntidad {
 		return servicio;
 	}
 
+	public boolean isEstadoActual() {
+		return estadoActual;
+	}
+
 	private void setId(final UUID id) {
 		this.id = UtilUUID.obtenerValorDefecto(id);
 	}
@@ -73,6 +79,10 @@ public class TarifaEntidad {
 		this.servicio = UtilObjeto.obtenerValorDefecto(servicio, null);
 	}
 
+	private void setEstadoActual(final boolean estadoActual) {
+		this.estadoActual = estadoActual;
+	}
+
 	public static class Builder {
 
 		private UUID id;
@@ -81,6 +91,7 @@ public class TarifaEntidad {
 		private Date fechaFinVigenciaTarifa;
 		private TipoVehiculoEntidad tipoVehiculo;
 		private ServicioEntidad servicio;
+		private boolean estadoActual = true;
 
 		public Builder id(final UUID id) {
 			this.id = UtilUUID.obtenerValorDefecto(id);
@@ -109,6 +120,11 @@ public class TarifaEntidad {
 
 		public Builder servicio(final ServicioEntidad servicio) {
 			this.servicio = servicio;
+			return this;
+		}
+
+		public Builder estadoActual(final boolean estadoActual) {
+			this.estadoActual = estadoActual;
 			return this;
 		}
 

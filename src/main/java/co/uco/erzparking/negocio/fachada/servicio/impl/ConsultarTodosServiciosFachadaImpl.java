@@ -42,10 +42,14 @@ public class ConsultarTodosServiciosFachadaImpl implements ConsultarTodosServici
 				? new TipoServicioDTO.Builder()
 						.id(d.getTipoServicio().getId())
 						.nombreServicio(d.getTipoServicio().getNombreServicio())
+						.descripcion(d.getTipoServicio().getDescripcion())
 						.build()
 				: null;
 		var parqueaderoDTO = d.getParqueadero() != null
-				? new ParqueaderoDTO.Builder().id(d.getParqueadero().getId()).build()
+				? new ParqueaderoDTO.Builder()
+						.id(d.getParqueadero().getId())
+						.nombreEstablecimiento(d.getParqueadero().getNombreEstablecimiento())
+						.build()
 				: null;
 		return new ServicioDTO.Builder()
 				.id(d.getId())
@@ -53,6 +57,18 @@ public class ConsultarTodosServiciosFachadaImpl implements ConsultarTodosServici
 				.tipoServicio(tipoServicioDTO)
 				.parqueadero(parqueaderoDTO)
 				.build();
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new ServicioDTO.Builder().build();
+			var resultado = new ConsultarTodosServiciosFachadaImpl().ejecutar(filtro);
+			System.out.println("Total servicios encontrados: " + resultado.size());
+			resultado.forEach(s -> System.out.println(" - " + s.getId() + " | " + s.getNombreServicio()));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 }

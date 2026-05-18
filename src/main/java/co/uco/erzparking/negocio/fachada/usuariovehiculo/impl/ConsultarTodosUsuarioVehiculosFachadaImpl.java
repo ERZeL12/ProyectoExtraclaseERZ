@@ -39,16 +39,38 @@ public class ConsultarTodosUsuarioVehiculosFachadaImpl implements ConsultarTodos
 
 	private UsuarioVehiculoDTO mapearADto(final UsuarioVehiculoDominio d) {
 		var usuarioDTO = d.getUsuario() != null
-				? new UsuarioDTO.Builder().id(d.getUsuario().getId()).build()
+				? new UsuarioDTO.Builder()
+						.id(d.getUsuario().getId())
+						.primerNombre(d.getUsuario().getPrimerNombre())
+						.primerApellido(d.getUsuario().getPrimerApellido())
+						.numeroIdentificacion(d.getUsuario().getNumeroIdentificacion())
+						.build()
 				: null;
 		var vehiculoDTO = d.getVehiculo() != null
-				? new VehiculoDTO.Builder().id(d.getVehiculo().getId()).build()
+				? new VehiculoDTO.Builder()
+						.id(d.getVehiculo().getId())
+						.placaVehiculo(d.getVehiculo().getPlacaVehiculo())
+						.build()
 				: null;
 		return new UsuarioVehiculoDTO.Builder()
 				.id(d.getId())
 				.usuario(usuarioDTO)
 				.vehiculo(vehiculoDTO)
 				.build();
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new UsuarioVehiculoDTO.Builder().build();
+			var resultado = new ConsultarTodosUsuarioVehiculosFachadaImpl().ejecutar(filtro);
+			System.out.println("Total usuario-vehiculo encontrados: " + resultado.size());
+			resultado.forEach(uv -> System.out.println(" - " + uv.getId()
+					+ " | usuarioId=" + (uv.getUsuario() != null ? uv.getUsuario().getId() : "(sin usuario)")
+					+ " | vehiculoId=" + (uv.getVehiculo() != null ? uv.getVehiculo().getId() : "(sin vehiculo)")));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 }

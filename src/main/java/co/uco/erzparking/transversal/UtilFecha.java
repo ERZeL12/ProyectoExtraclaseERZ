@@ -23,4 +23,8 @@ public final class UtilFecha {
 		return UtilObjeto.obtenerValorDefecto(fecha, valorDefecto);
 	}
 
+	public static boolean esSentinela(final Date fecha) {
+		return UtilObjeto.esNulo(fecha) || fecha.getTime() == VALOR_DEFECTO.getTime();
+	}
+
 }

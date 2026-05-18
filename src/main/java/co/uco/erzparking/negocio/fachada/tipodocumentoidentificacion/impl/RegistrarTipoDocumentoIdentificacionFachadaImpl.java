@@ -21,7 +21,7 @@ public class RegistrarTipoDocumentoIdentificacionFachadaImpl implements Registra
 	@Override
 	public void ejecutar(final TipoDocumentoIdentificacionDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new TipoDocumentoIdentificacionDominio.Builder()
 					.id(datos.getId())
 					.nombreDocumentoIdentificacion(datos.getNombreDocumentoIdentificacion())

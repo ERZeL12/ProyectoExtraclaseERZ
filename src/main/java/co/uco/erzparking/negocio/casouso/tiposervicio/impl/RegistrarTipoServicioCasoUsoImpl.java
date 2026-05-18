@@ -44,6 +44,7 @@ public class RegistrarTipoServicioCasoUsoImpl implements RegistrarTipoServicioCa
 		var entidad = new TipoServicioEntidad.Builder()
 				.id(generarIdUnico())
 				.nombreServicio(datos.getNombreServicio())
+				.descripcion(datos.getDescripcion())
 				.build();
 		daoFactory.getTipoServicioDAO().crear(entidad);
 	}

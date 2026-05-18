@@ -39,7 +39,20 @@ public class ConsultarTodosTipoServiciosFachadaImpl implements ConsultarTodosTip
 		return new TipoServicioDTO.Builder()
 				.id(d.getId())
 				.nombreServicio(d.getNombreServicio())
+				.descripcion(d.getDescripcion())
 				.build();
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new TipoServicioDTO.Builder().build();
+			var resultado = new ConsultarTodosTipoServiciosFachadaImpl().ejecutar(filtro);
+			System.out.println("Total tipos servicio encontrados: " + resultado.size());
+			resultado.forEach(t -> System.out.println(" - " + t.getId() + " | " + t.getNombreServicio()));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 }

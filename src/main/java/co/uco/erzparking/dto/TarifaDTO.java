@@ -15,6 +15,17 @@ public class TarifaDTO {
 	private Date fechaFinVigenciaTarifa;
 	private TipoVehiculoDTO tipoVehiculo;
 	private ServicioDTO servicio;
+	private boolean estadoActual;
+
+	public TarifaDTO() {
+		setId(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+		setValorServicio(0.0);
+		setFechaInicioVigenciaTarifa(java.sql.Date.valueOf("0001-01-01"));
+		setFechaFinVigenciaTarifa(java.sql.Date.valueOf("0001-01-01"));
+		setTipoVehiculo(new TipoVehiculoDTO());
+		setServicio(new ServicioDTO());
+		setEstadoActual(true);
+	}
 
 	private TarifaDTO(final Builder builder) {
 		setId(builder.id);
@@ -23,6 +34,7 @@ public class TarifaDTO {
 		setFechaFinVigenciaTarifa(builder.fechaFinVigenciaTarifa);
 		setTipoVehiculo(builder.tipoVehiculo);
 		setServicio(builder.servicio);
+		setEstadoActual(builder.estadoActual);
 	}
 
 	public UUID getId() {
@@ -49,6 +61,10 @@ public class TarifaDTO {
 		return servicio;
 	}
 
+	public boolean isEstadoActual() {
+		return estadoActual;
+	}
+
 	private void setId(final UUID id) {
 		this.id = UtilUUID.obtenerValorDefecto(id);
 	}
@@ -73,6 +89,10 @@ public class TarifaDTO {
 		this.servicio = UtilObjeto.obtenerValorDefecto(servicio, null);
 	}
 
+	private void setEstadoActual(final boolean estadoActual) {
+		this.estadoActual = estadoActual;
+	}
+
 	public static class Builder {
 
 		private UUID id;
@@ -81,6 +101,7 @@ public class TarifaDTO {
 		private Date fechaFinVigenciaTarifa;
 		private TipoVehiculoDTO tipoVehiculo;
 		private ServicioDTO servicio;
+		private boolean estadoActual = true;
 
 		public Builder id(final UUID id) {
 			this.id = UtilUUID.obtenerValorDefecto(id);
@@ -109,6 +130,11 @@ public class TarifaDTO {
 
 		public Builder servicio(final ServicioDTO servicio) {
 			this.servicio = servicio;
+			return this;
+		}
+
+		public Builder estadoActual(final boolean estadoActual) {
+			this.estadoActual = estadoActual;
 			return this;
 		}
 

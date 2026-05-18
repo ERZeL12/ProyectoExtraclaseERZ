@@ -15,6 +15,15 @@ public class EspacioFisicoDTO {
 	private ZonaParqueaderoDTO zonaEspacioFisico;
 	private ParqueaderoDTO parqueadero;
 
+	public EspacioFisicoDTO() {
+		setId(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+		setNumeroEspacioFisico("");
+		setTipoServicio(new TipoServicioDTO());
+		setEstadoEspacioFisico(new EstadoEspacioFisicoDTO());
+		setZonaEspacioFisico(new ZonaParqueaderoDTO());
+		setParqueadero(new ParqueaderoDTO());
+	}
+
 	private EspacioFisicoDTO(final Builder builder) {
 		setId(builder.id);
 		setNumeroEspacioFisico(builder.numeroEspacioFisico);

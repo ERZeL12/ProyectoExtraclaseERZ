@@ -29,7 +29,7 @@ public class RegistrarOperarioFachadaImpl implements RegistrarOperarioFachada {
 	@Override
 	public void ejecutar(final OperarioDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new OperarioDominio.Builder()
 					.id(datos.getId())
 					.tipoDocumentoIdentificacion(datos.getTipoDocumentoIdentificacion() != null ? new TipoDocumentoIdentificacionDominio.Builder()
@@ -65,7 +65,7 @@ public class RegistrarOperarioFachadaImpl implements RegistrarOperarioFachada {
 		try {
 			var dto = new OperarioDTO.Builder()
 					.tipoDocumentoIdentificacion(new TipoDocumentoIdentificacionDTO.Builder()
-							.id(UUID.fromString("UUID_DE_TIPODOCUMENTO"))
+							.id(UUID.fromString("d6843f94-2ed3-47ff-b903-e7445142c816"))
 							.build())
 					.numeroIdentificacion("1037656789")
 					.primerNombre("Carlos")
@@ -74,10 +74,10 @@ public class RegistrarOperarioFachadaImpl implements RegistrarOperarioFachada {
 					.segundoApellido("Restrepo")
 					.numeroTelefonico(3105551234L)
 					.cargo(new CargoDTO.Builder()
-							.id(UUID.fromString("UUID_DE_CARGO"))
+							.id(UUID.fromString("19108fe6-14ef-4e90-8baa-5a607def5b3d"))
 							.build())
 					.parqueadero(new ParqueaderoDTO.Builder()
-							.id(UUID.fromString("UUID_DE_PARQUEADERO"))
+							.id(UUID.fromString("6f34728b-d0ee-4440-bd24-38b29b2ed427"))
 							.build())
 					.build();
 			new RegistrarOperarioFachadaImpl().ejecutar(dto);

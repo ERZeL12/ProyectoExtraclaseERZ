@@ -23,17 +23,15 @@ public class TipoVehiculoSQLServerDAO extends SQLDAO implements TipoVehiculoDAO 
 
 	@Override
 	public void crear(final TipoVehiculoEntidad entidad) {
-		final String sql = "INSERT INTO TipoVehiculo (id, nombreVehiculo) VALUES (?, ?)";
-		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
-			ps.setString(1, entidad.getId().toString());
-			ps.setString(2, entidad.getNombreVehiculo());
-			ps.executeUpdate();
-		} catch (SQLException e) {
-		    System.err.println("SQL Error: " + e.getMessage());
-		    System.err.println("SQL State: " + e.getSQLState());
-		    System.err.println("Error Code: " + e.getErrorCode());
-		    throw ERZParkingExcepcion.crear(e, "Error al crear el tipo de vehiculo", "SQLException: " + e.getMessage());
-		}
+	    final String sql = "INSERT INTO TipoVehiculo (id, nombreVehiculo, descripcion) VALUES (?, ?, ?)";
+	    try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
+	        ps.setString(1, entidad.getId().toString());
+	        ps.setString(2, entidad.getNombreVehiculo());
+	        ps.setString(3, entidad.getDescripcion());
+	        ps.executeUpdate();
+	    } catch (SQLException e) {
+	        throw ERZParkingExcepcion.crear(e, "Error al crear el tipo de vehiculo", "SQLException al insertar en tabla TipoVehiculo: " + e.getMessage());
+	    }
 	}
 
 	@Override
@@ -61,7 +59,7 @@ public class TipoVehiculoSQLServerDAO extends SQLDAO implements TipoVehiculoDAO 
 
 	@Override
 	public TipoVehiculoEntidad consultarPorId(final UUID id) {
-		final String sql = "SELECT id, nombreVehiculo FROM TipoVehiculo WHERE id = ?";
+		final String sql = "SELECT id, nombreVehiculo, descripcion FROM TipoVehiculo WHERE id = ?";
 		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
 			ps.setString(1, id.toString());
 			try (ResultSet rs = ps.executeQuery()) {
@@ -82,7 +80,7 @@ public class TipoVehiculoSQLServerDAO extends SQLDAO implements TipoVehiculoDAO 
 
 	@Override
 	public List<TipoVehiculoEntidad> consultarPorFiltro(final TipoVehiculoEntidad filtro) {
-		final StringBuilder sql = new StringBuilder("SELECT id, nombreVehiculo FROM TipoVehiculo WHERE 1=1");
+		final StringBuilder sql = new StringBuilder("SELECT id, nombreVehiculo, descripcion FROM TipoVehiculo WHERE 1=1");
 		final List<Object> parametros = new ArrayList<>();
 
 		if (!UtilObjeto.esNulo(filtro) && !UtilTexto.esNula(filtro.getNombreVehiculo()) && !filtro.getNombreVehiculo().isEmpty()) {
@@ -110,6 +108,7 @@ public class TipoVehiculoSQLServerDAO extends SQLDAO implements TipoVehiculoDAO 
 		return new TipoVehiculoEntidad.Builder()
 				.id(UUID.fromString(rs.getString("id")))
 				.nombreVehiculo(rs.getString("nombreVehiculo"))
+				.descripcion(rs.getString("descripcion"))
 				.build();
 	}
 

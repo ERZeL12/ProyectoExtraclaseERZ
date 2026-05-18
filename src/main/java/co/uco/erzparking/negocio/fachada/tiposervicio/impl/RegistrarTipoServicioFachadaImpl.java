@@ -21,10 +21,11 @@ public class RegistrarTipoServicioFachadaImpl implements RegistrarTipoServicioFa
 	@Override
 	public void ejecutar(final TipoServicioDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new TipoServicioDominio.Builder()
 					.id(datos.getId())
 					.nombreServicio(datos.getNombreServicio())
+					.descripcion(datos.getDescripcion())
 					.build();
 			casoUso.ejecutar(dominio);
 			daoFactory.confirmarTransaccion();

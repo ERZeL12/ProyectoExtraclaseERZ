@@ -60,7 +60,8 @@ public class ZonaParqueaderoSQLServerDAO extends SQLDAO implements ZonaParqueade
 
 	@Override
 	public ZonaParqueaderoEntidad consultarPorId(final UUID id) {
-		final String sql = "SELECT z.id, z.nombreZona, p.id as parqueadero_id FROM ZonaParqueadero z INNER JOIN Parqueadero p ON z.parqueadero_id = p.id WHERE z.id = ?";
+		final String sql = "SELECT z.id, z.nombreZona, p.id as parqueadero_id, p.nombreEstablecimiento as parqueadero_nombre "
+				+ "FROM ZonaParqueadero z INNER JOIN Parqueadero p ON z.parqueadero_id = p.id WHERE z.id = ?";
 		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
 			ps.setString(1, id.toString());
 			try (ResultSet rs = ps.executeQuery()) {
@@ -82,12 +83,19 @@ public class ZonaParqueaderoSQLServerDAO extends SQLDAO implements ZonaParqueade
 	@Override
 	public List<ZonaParqueaderoEntidad> consultarPorFiltro(final ZonaParqueaderoEntidad filtro) {
 		final StringBuilder sql = new StringBuilder(
-				"SELECT z.id, z.nombreZona, p.id as parqueadero_id FROM ZonaParqueadero z INNER JOIN Parqueadero p ON z.parqueadero_id = p.id WHERE 1=1");
+				"SELECT z.id, z.nombreZona, p.id as parqueadero_id, p.nombreEstablecimiento as parqueadero_nombre "
+				+ "FROM ZonaParqueadero z INNER JOIN Parqueadero p ON z.parqueadero_id = p.id WHERE 1=1");
 		final List<Object> parametros = new ArrayList<>();
 
-		if (!UtilObjeto.esNulo(filtro) && !UtilTexto.esNula(filtro.getNombreZona()) && !filtro.getNombreZona().isEmpty()) {
-			sql.append(" AND z.nombreZona LIKE ?");
-			parametros.add("%" + filtro.getNombreZona() + "%");
+		if (!UtilObjeto.esNulo(filtro)) {
+			if (!UtilTexto.esNula(filtro.getNombreZona()) && !filtro.getNombreZona().isEmpty()) {
+				sql.append(" AND z.nombreZona LIKE ?");
+				parametros.add("%" + filtro.getNombreZona() + "%");
+			}
+			if (!UtilObjeto.esNulo(filtro.getParqueadero()) && !UtilObjeto.esNulo(filtro.getParqueadero().getId())) {
+				sql.append(" AND z.parqueadero_id = ?");
+				parametros.add(filtro.getParqueadero().getId().toString());
+			}
 		}
 
 		final List<ZonaParqueaderoEntidad> resultados = new ArrayList<>();
@@ -109,6 +117,7 @@ public class ZonaParqueaderoSQLServerDAO extends SQLDAO implements ZonaParqueade
 	private ZonaParqueaderoEntidad construirZonaEntidad(final ResultSet rs) throws SQLException {
 		var parqueadero = new ParqueaderoEntidad.Builder()
 				.id(UUID.fromString(rs.getString("parqueadero_id")))
+				.nombreEstablecimiento(rs.getString("parqueadero_nombre"))
 				.build();
 		return new ZonaParqueaderoEntidad.Builder()
 				.id(UUID.fromString(rs.getString("id")))

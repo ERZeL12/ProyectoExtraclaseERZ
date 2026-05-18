@@ -24,4 +24,12 @@ public final class UtilTexto {
 		return obtenerValorDefecto(texto).trim();
 	}
 
+	public static String eliminarEspaciosInternos(final String texto) {
+		return aplicarTrim(texto).replaceAll("\\s+", "");
+	}
+
+	public static String colapsarEspaciosInternos(final String texto) {
+		return aplicarTrim(texto).replaceAll("\\s+", " ");
+	}
+
 }

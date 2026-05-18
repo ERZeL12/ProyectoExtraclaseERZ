@@ -21,7 +21,7 @@ public class RegistrarVehiculoFachadaImpl implements RegistrarVehiculoFachada {
 	@Override
 	public void ejecutar(final VehiculoDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new VehiculoDominio.Builder()
 					.id(datos.getId())
 					.placaVehiculo(datos.getPlacaVehiculo())

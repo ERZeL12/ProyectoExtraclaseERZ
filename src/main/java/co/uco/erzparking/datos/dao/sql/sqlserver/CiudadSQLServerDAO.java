@@ -95,9 +95,15 @@ public class CiudadSQLServerDAO extends SQLDAO implements CiudadDAO {
 				+ "WHERE 1=1");
 		final List<Object> parametros = new ArrayList<>();
 
-		if (!UtilObjeto.esNulo(filtro) && !UtilTexto.esNula(filtro.getNombre()) && !filtro.getNombre().isEmpty()) {
-			sql.append(" AND c.nombre LIKE ?");
-			parametros.add("%" + filtro.getNombre() + "%");
+		if (!UtilObjeto.esNulo(filtro)) {
+			if (!UtilTexto.esNula(filtro.getNombre()) && !filtro.getNombre().isEmpty()) {
+				sql.append(" AND c.nombre LIKE ?");
+				parametros.add("%" + filtro.getNombre() + "%");
+			}
+			if (!UtilObjeto.esNulo(filtro.getDepartamento()) && !UtilObjeto.esNulo(filtro.getDepartamento().getId())) {
+				sql.append(" AND c.departamento_id = ?");
+				parametros.add(filtro.getDepartamento().getId().toString());
+			}
 		}
 
 		final List<CiudadEntidad> resultados = new ArrayList<>();

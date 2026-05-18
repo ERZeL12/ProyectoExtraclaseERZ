@@ -32,7 +32,10 @@ public class ConsultarTodosParqueaderosCasoUsoImpl implements ConsultarTodosParq
 
 	private ParqueaderoDominio mapearAdominio(final ParqueaderoEntidad entidad) {
 		var ciudad = !UtilObjeto.esNulo(entidad.getCiudad())
-				? new CiudadDominio.Builder().id(entidad.getCiudad().getId()).build()
+				? new CiudadDominio.Builder()
+						.id(entidad.getCiudad().getId())
+						.nombre(entidad.getCiudad().getNombre())
+						.build()
 				: null;
 		return new ParqueaderoDominio.Builder()
 				.id(entidad.getId())

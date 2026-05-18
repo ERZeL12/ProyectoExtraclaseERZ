@@ -48,8 +48,13 @@ public class UsuarioVehiculoSQLServerDAO extends SQLDAO implements UsuarioVehicu
 
 	@Override
 	public UsuarioVehiculoEntidad consultarPorId(final UUID id) {
-		final String sql = "SELECT uv.id, uv.usuario_id, uv.vehiculo_id "
-				+ "FROM UsuarioVehiculo uv WHERE uv.id = ?";
+		final String sql = "SELECT uv.id, "
+				+ "u.id as usuario_id, u.primerNombre, u.primerApellido, u.numeroIdentificacion, "
+				+ "v.id as vehiculo_id, v.placaVehiculo "
+				+ "FROM UsuarioVehiculo uv "
+				+ "INNER JOIN Usuario u ON uv.usuario_id = u.id "
+				+ "INNER JOIN Vehiculo v ON uv.vehiculo_id = v.id "
+				+ "WHERE uv.id = ?";
 		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
 			ps.setString(1, id.toString());
 			try (ResultSet rs = ps.executeQuery()) {
@@ -71,7 +76,13 @@ public class UsuarioVehiculoSQLServerDAO extends SQLDAO implements UsuarioVehicu
 	@Override
 	public List<UsuarioVehiculoEntidad> consultarPorFiltro(final UsuarioVehiculoEntidad filtro) {
 		final StringBuilder sql = new StringBuilder(
-				"SELECT uv.id, uv.usuario_id, uv.vehiculo_id FROM UsuarioVehiculo uv WHERE 1=1");
+				"SELECT uv.id, "
+				+ "u.id as usuario_id, u.primerNombre, u.primerApellido, u.numeroIdentificacion, "
+				+ "v.id as vehiculo_id, v.placaVehiculo "
+				+ "FROM UsuarioVehiculo uv "
+				+ "INNER JOIN Usuario u ON uv.usuario_id = u.id "
+				+ "INNER JOIN Vehiculo v ON uv.vehiculo_id = v.id "
+				+ "WHERE 1=1");
 		final List<Object> parametros = new ArrayList<>();
 
 		if (!UtilObjeto.esNulo(filtro)) {
@@ -103,8 +114,13 @@ public class UsuarioVehiculoSQLServerDAO extends SQLDAO implements UsuarioVehicu
 
 	// Consulta si un vehiculo tiene un usuario dueno registrado
 	public UsuarioVehiculoEntidad consultarPorVehiculo(final UUID vehiculoId) {
-		final String sql = "SELECT uv.id, uv.usuario_id, uv.vehiculo_id "
-				+ "FROM UsuarioVehiculo uv WHERE uv.vehiculo_id = ?";
+		final String sql = "SELECT uv.id, "
+				+ "u.id as usuario_id, u.primerNombre, u.primerApellido, u.numeroIdentificacion, "
+				+ "v.id as vehiculo_id, v.placaVehiculo "
+				+ "FROM UsuarioVehiculo uv "
+				+ "INNER JOIN Usuario u ON uv.usuario_id = u.id "
+				+ "INNER JOIN Vehiculo v ON uv.vehiculo_id = v.id "
+				+ "WHERE uv.vehiculo_id = ?";
 		try (PreparedStatement ps = getConexion().prepareStatement(sql)) {
 			ps.setString(1, vehiculoId.toString());
 			try (ResultSet rs = ps.executeQuery()) {
@@ -121,9 +137,13 @@ public class UsuarioVehiculoSQLServerDAO extends SQLDAO implements UsuarioVehicu
 	private UsuarioVehiculoEntidad construirUsuarioVehiculoEntidad(final ResultSet rs) throws SQLException {
 		var usuario = new UsuarioEntidad.Builder()
 				.id(UUID.fromString(rs.getString("usuario_id")))
+				.primerNombre(rs.getString("primerNombre"))
+				.primerApellido(rs.getString("primerApellido"))
+				.numeroIdentificacion(rs.getString("numeroIdentificacion"))
 				.build();
 		var vehiculo = new VehiculoEntidad.Builder()
 				.id(UUID.fromString(rs.getString("vehiculo_id")))
+				.placaVehiculo(rs.getString("placaVehiculo"))
 				.build();
 		return new UsuarioVehiculoEntidad.Builder()
 				.id(UUID.fromString(rs.getString("id")))

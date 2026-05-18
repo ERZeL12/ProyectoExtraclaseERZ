@@ -40,10 +40,15 @@ public class ConsultarUsuarioPorIdCasoUsoImpl implements ConsultarUsuarioPorIdCa
 		var tipoDocumentoIdentificacion = !UtilObjeto.esNulo(entidad.getTipoDocumentoIdentificacion())
 				? new TipoDocumentoIdentificacionDominio.Builder()
 						.id(entidad.getTipoDocumentoIdentificacion().getId())
+						.nombreDocumentoIdentificacion(entidad.getTipoDocumentoIdentificacion().getNombreDocumentoIdentificacion())
+						.descripcion(entidad.getTipoDocumentoIdentificacion().getDescripcion())
 						.build()
 				: null;
 		var ciudad = !UtilObjeto.esNulo(entidad.getCiudad())
-				? new CiudadDominio.Builder().id(entidad.getCiudad().getId()).build()
+				? new CiudadDominio.Builder()
+						.id(entidad.getCiudad().getId())
+						.nombre(entidad.getCiudad().getNombre())
+						.build()
 				: null;
 		return new UsuarioDominio.Builder()
 				.id(entidad.getId())

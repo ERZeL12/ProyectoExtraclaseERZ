@@ -14,6 +14,14 @@ public class EntradaDTO {
 	private ServicioDTO servicio;
 	private OperarioDTO operario;
 
+	public EntradaDTO() {
+		setId(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+		setFechaHoraEntrada(LocalDateTime.of(1, 1, 1, 0, 0, 0));
+		setVehiculo(new VehiculoDTO());
+		setServicio(new ServicioDTO());
+		setOperario(new OperarioDTO());
+	}
+
 	private EntradaDTO(final Builder builder) {
 		setId(builder.id);
 		setFechaHoraEntrada(builder.fechaHoraEntrada);

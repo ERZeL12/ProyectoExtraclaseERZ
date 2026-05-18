@@ -21,7 +21,7 @@ public class RegistrarCiudadFachadaImpl implements RegistrarCiudadFachada {
 	@Override
 	public void ejecutar(final CiudadDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new CiudadDominio.Builder()
 					.id(datos.getId())
 					.nombre(datos.getNombre())

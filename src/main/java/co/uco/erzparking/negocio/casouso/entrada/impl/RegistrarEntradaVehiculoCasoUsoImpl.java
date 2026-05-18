@@ -33,9 +33,9 @@ public class RegistrarEntradaVehiculoCasoUsoImpl implements RegistrarEntradaVehi
 	public void ejecutar(final EntradaDominio datos) {
 		validarIntegridadDatos(datos);
 		validarOperario(datos);
+		validarServicioActivo(datos);
 		var vehiculo = consultarYValidarVehiculo(datos);
 		validarVehiculoTieneUsuarioRegistrado(vehiculo);
-		validarVehiculoSinEntradaActiva(datos);
 		validarTarifaVigente(vehiculo, datos);
 		var espacioAsignado = determinarEspacioFisico(datos, vehiculo);
 		validarEspacioDisponible(espacioAsignado);
@@ -59,11 +59,25 @@ public class RegistrarEntradaVehiculoCasoUsoImpl implements RegistrarEntradaVehi
 		}
 	}
 
-	// 2. Validar que el operario exista en el sistema
+	// 2. Validar que el operario exista en el sistema y este activo
 	private void validarOperario(final EntradaDominio entrada) {
 		var operario = daoFactory.getOperarioDAO().consultarPorId(entrada.getOperario().getId());
 		if (UtilObjeto.esNulo(operario)) {
 			throw ERZParkingExcepcion.crear("El operario no se encuentra registrado en el sistema", "Operario con id " + entrada.getOperario().getId() + " no encontrado en BD");
+		}
+		if (!operario.isEstadoActual()) {
+			throw ERZParkingExcepcion.crear("El operario debe estar activo para registrar una entrada", "Operario con id " + entrada.getOperario().getId() + " no esta activo");
+		}
+	}
+
+	// 2b. Validar que el servicio exista en el sistema y este activo
+	private void validarServicioActivo(final EntradaDominio entrada) {
+		var servicio = daoFactory.getServicioDAO().consultarPorId(entrada.getServicio().getId());
+		if (UtilObjeto.esNulo(servicio)) {
+			throw ERZParkingExcepcion.crear("El servicio no se encuentra registrado en el sistema", "Servicio con id " + entrada.getServicio().getId() + " no encontrado en BD");
+		}
+		if (!servicio.isEstadoActual()) {
+			throw ERZParkingExcepcion.crear("El servicio debe estar activo para registrar una entrada", "Servicio con id " + entrada.getServicio().getId() + " no esta activo");
 		}
 	}
 
@@ -88,25 +102,19 @@ public class RegistrarEntradaVehiculoCasoUsoImpl implements RegistrarEntradaVehi
 		}
 	}
 
-	// 5. Regla: Un vehiculo no puede tener una entrada activa sin salida registrada
-	private void validarVehiculoSinEntradaActiva(final EntradaDominio entrada) {
-		var entradaDAO = (EntradaSQLServerDAO) daoFactory.getEntradaDAO();
-		var entradaActiva = entradaDAO.consultarEntradaActivaPorVehiculo(entrada.getVehiculo().getId());
-		if (!UtilObjeto.esNulo(entradaActiva)) {
-			throw ERZParkingExcepcion.crear("El vehiculo ya tiene una entrada activa sin salida registrada. No puede ingresar dos veces al mismo tiempo", "Entrada activa encontrada con id " + entradaActiva.getId());
-		}
-	}
-
-	// 6. Regla: Debe existir una tarifa vigente para el tipo de vehiculo y el servicio solicitado
+	// 5. Regla: Debe existir una tarifa vigente y activa para el tipo de vehiculo y el servicio solicitado
 	private void validarTarifaVigente(final VehiculoEntidad vehiculo, final EntradaDominio entrada) {
 		var tarifaDAO = (TarifaSQLServerDAO) daoFactory.getTarifaDAO();
 		var tarifaVigente = tarifaDAO.consultarTarifaVigente(vehiculo.getTipoVehiculo().getId(), entrada.getServicio().getId());
 		if (UtilObjeto.esNulo(tarifaVigente)) {
 			throw ERZParkingExcepcion.crear("No existe una tarifa vigente para el tipo de vehiculo y el servicio solicitado en la fecha actual", "Tarifa no encontrada para tipoVehiculo " + vehiculo.getTipoVehiculo().getId() + " y servicio " + entrada.getServicio().getId());
 		}
+		if (!tarifaVigente.isEstadoActual()) {
+			throw ERZParkingExcepcion.crear("La tarifa vigente debe estar activa para registrar una entrada", "Tarifa con id " + tarifaVigente.getId() + " no esta activa");
+		}
 	}
 
-	// 7. Determinar el espacio fisico a asignar
+	// 6. Determinar el espacio fisico a asignar
 	private EspacioFisicoEntidad determinarEspacioFisico(final EntradaDominio entrada, final VehiculoEntidad vehiculo) {
 		var contratoDAO = (ContratoMensualidadSQLServerDAO) daoFactory.getContratoMensualidadDAO();
 		var contratoVigente = contratoDAO.consultarContratoVigentePorVehiculo(vehiculo.getId());
@@ -129,7 +137,7 @@ public class RegistrarEntradaVehiculoCasoUsoImpl implements RegistrarEntradaVehi
 		return espaciosDisponibles.get(0);
 	}
 
-	// 8. Regla: El espacio fisico debe estar en estado DISPONIBLE
+	// 7. Regla: El espacio fisico debe estar en estado DISPONIBLE
 	private void validarEspacioDisponible(final EspacioFisicoEntidad espacioFisico) {
 		if (UtilObjeto.esNulo(espacioFisico)
 				|| UtilObjeto.esNulo(espacioFisico.getEstadoEspacioFisico())
@@ -174,12 +182,16 @@ public class RegistrarEntradaVehiculoCasoUsoImpl implements RegistrarEntradaVehi
 
 	// Actualizar el estado del espacio fisico a OCUPADO
 	private void actualizarEstadoEspacio(final EspacioFisicoEntidad espacioFisico) {
-		var estadoOcupado = new EstadoEspacioFisicoEntidad.Builder()
+		var filtro = new EstadoEspacioFisicoEntidad.Builder()
 				.nombreEstadoEspacioFisico("OCUPADO")
 				.build();
+		var estadosOcupado = daoFactory.getEstadoEspacioFisicoDAO().consultarPorFiltro(filtro);
+		if (estadosOcupado.isEmpty()) {
+			throw ERZParkingExcepcion.crear("No existe el estado OCUPADO en la base de datos");
+		}
 		var espacioActualizado = new EspacioFisicoEntidad.Builder()
 				.id(espacioFisico.getId())
-				.estadoEspacioFisico(estadoOcupado)
+				.estadoEspacioFisico(estadosOcupado.get(0))
 				.build();
 		daoFactory.getEspacioFisicoDAO().actualizar(espacioFisico.getId(), espacioActualizado);
 	}

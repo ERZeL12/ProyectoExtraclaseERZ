@@ -58,4 +58,16 @@ public class ConsultarTodosCiudadsFachadaImpl implements ConsultarTodosCiudadsFa
 				.build();
 	}
 
+	public static void main(final String[] args) {
+		try {
+			var filtro = new CiudadDTO.Builder().build();
+			var resultado = new ConsultarTodosCiudadsFachadaImpl().ejecutar(filtro);
+			System.out.println("Total ciudades encontradas: " + resultado.size());
+			resultado.forEach(c -> System.out.println(" - " + c.getId() + " | " + c.getNombre()));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
 }

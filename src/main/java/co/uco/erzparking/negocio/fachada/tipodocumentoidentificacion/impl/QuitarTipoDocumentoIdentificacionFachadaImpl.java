@@ -1,5 +1,7 @@
 package co.uco.erzparking.negocio.fachada.tipodocumentoidentificacion.impl;
 
+import java.util.UUID;
+
 import co.uco.erzparking.datos.dao.sql.factoria.DAOFactory;
 import co.uco.erzparking.dto.TipoDocumentoIdentificacionDTO;
 import co.uco.erzparking.negocio.casouso.tipodocumentoidentificacion.QuitarTipoDocumentoIdentificacionCasoUso;
@@ -21,7 +23,7 @@ public class QuitarTipoDocumentoIdentificacionFachadaImpl implements QuitarTipoD
 	@Override
 	public void ejecutar(final TipoDocumentoIdentificacionDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new TipoDocumentoIdentificacionDominio.Builder().id(datos.getId()).build();
 			casoUso.ejecutar(dominio);
 			daoFactory.confirmarTransaccion();
@@ -33,6 +35,19 @@ public class QuitarTipoDocumentoIdentificacionFachadaImpl implements QuitarTipoD
 			throw ERZParkingExcepcion.crear(excepcion, "Error inesperado al procesar la solicitud", excepcion.getMessage());
 				} finally {
 			daoFactory.cerrarConexion();
+		}
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var dto = new TipoDocumentoIdentificacionDTO.Builder()
+					.id(UUID.fromString("d6843f94-2ed3-47ff-b903-e7445142c816"))
+					.build();
+			new QuitarTipoDocumentoIdentificacionFachadaImpl().ejecutar(dto);
+			System.out.println("TipoDocumentoIdentificacion eliminado exitosamente.");
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

@@ -21,10 +21,11 @@ public class RegistrarTipoVehiculoFachadaImpl implements RegistrarTipoVehiculoFa
 	@Override
 	public void ejecutar(final TipoVehiculoDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new TipoVehiculoDominio.Builder()
 					.id(datos.getId())
 					.nombreVehiculo(datos.getNombreVehiculo())
+					.descripcion(datos.getDescripcion())
 					.build();
 			casoUso.ejecutar(dominio);
 			daoFactory.confirmarTransaccion();

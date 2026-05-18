@@ -33,10 +33,18 @@ public class ConsultarTodosUsuarioVehiculosCasoUsoImpl implements ConsultarTodos
 
 	private UsuarioVehiculoDominio mapearAdominio(final UsuarioVehiculoEntidad entidad) {
 		var usuario = !UtilObjeto.esNulo(entidad.getUsuario())
-				? new UsuarioDominio.Builder().id(entidad.getUsuario().getId()).build()
+				? new UsuarioDominio.Builder()
+						.id(entidad.getUsuario().getId())
+						.primerNombre(entidad.getUsuario().getPrimerNombre())
+						.primerApellido(entidad.getUsuario().getPrimerApellido())
+						.numeroIdentificacion(entidad.getUsuario().getNumeroIdentificacion())
+						.build()
 				: null;
 		var vehiculo = !UtilObjeto.esNulo(entidad.getVehiculo())
-				? new VehiculoDominio.Builder().id(entidad.getVehiculo().getId()).build()
+				? new VehiculoDominio.Builder()
+						.id(entidad.getVehiculo().getId())
+						.placaVehiculo(entidad.getVehiculo().getPlacaVehiculo())
+						.build()
 				: null;
 		return new UsuarioVehiculoDominio.Builder()
 				.id(entidad.getId())

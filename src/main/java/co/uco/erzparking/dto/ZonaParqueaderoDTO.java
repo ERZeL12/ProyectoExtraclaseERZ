@@ -12,6 +12,12 @@ public class ZonaParqueaderoDTO {
 	private String nombreZona;
 	private ParqueaderoDTO parqueadero;
 
+	public ZonaParqueaderoDTO() {
+		setId(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+		setNombreZona("");
+		setParqueadero(new ParqueaderoDTO());
+	}
+
 	private ZonaParqueaderoDTO(final Builder builder) {
 		setId(builder.id);
 		setNombreZona(builder.nombreZona);

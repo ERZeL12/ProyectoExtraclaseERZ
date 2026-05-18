@@ -37,7 +37,10 @@ public class ConsultarParqueaderoPorIdCasoUsoImpl implements ConsultarParqueader
 			throw ERZParkingExcepcion.crear("El parqueadero no existe en el sistema");
 		}
 		var ciudad = !UtilObjeto.esNulo(entidad.getCiudad())
-				? new CiudadDominio.Builder().id(entidad.getCiudad().getId()).build()
+				? new CiudadDominio.Builder()
+						.id(entidad.getCiudad().getId())
+						.nombre(entidad.getCiudad().getNombre())
+						.build()
 				: null;
 		return new ParqueaderoDominio.Builder()
 				.id(entidad.getId())

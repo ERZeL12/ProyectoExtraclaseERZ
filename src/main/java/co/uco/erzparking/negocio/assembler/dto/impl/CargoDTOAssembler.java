@@ -31,6 +31,7 @@ public final class CargoDTOAssembler implements DTOAssembler<CargoDominio, Cargo
 				.nombreCargo(cargoAEnsamblar.getNombreCargo())
 				.descripcion(cargoAEnsamblar.getDescripcion())
 				.parqueadero(ParqueaderoDTOAssembler.getInstance().ensamblarDominio(cargoAEnsamblar.getParqueadero()))
+				.estadoActual(cargoAEnsamblar.isEstadoActual())
 				.build();
 	}
 
@@ -43,6 +44,7 @@ public final class CargoDTOAssembler implements DTOAssembler<CargoDominio, Cargo
 				.nombreCargo(cargoAEnsamblar.getNombreCargo())
 				.descripcion(cargoAEnsamblar.getDescripcion())
 				.parqueadero(ParqueaderoDTOAssembler.getInstance().ensamblarDTO(cargoAEnsamblar.getParqueadero()))
+				.estadoActual(cargoAEnsamblar.isEstadoActual())
 				.build();
 	}
 

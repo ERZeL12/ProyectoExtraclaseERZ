@@ -25,7 +25,7 @@ public class RegistrarZonaParqueaderoFachadaImpl implements RegistrarZonaParquea
 	@Override
 	public void ejecutar(final ZonaParqueaderoDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new ZonaParqueaderoDominio.Builder()
 					.id(datos.getId())
 					.nombreZona(datos.getNombreZona())
@@ -51,7 +51,7 @@ public class RegistrarZonaParqueaderoFachadaImpl implements RegistrarZonaParquea
 			var dto = new ZonaParqueaderoDTO.Builder()
 					.nombreZona("Zona Norte")
 					.parqueadero(new ParqueaderoDTO.Builder()
-							.id(UUID.fromString("UUID_DE_PARQUEADERO"))
+							.id(UUID.fromString("6f34728b-d0ee-4440-bd24-38b29b2ed427"))
 							.build())
 					.build();
 			new RegistrarZonaParqueaderoFachadaImpl().ejecutar(dto);

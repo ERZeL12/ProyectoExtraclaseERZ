@@ -31,7 +31,7 @@ public class RegistrarEspacioFisicoFachadaImpl implements RegistrarEspacioFisico
 	@Override
 	public void ejecutar(final EspacioFisicoDTO datos) {
 		try {
-
+			daoFactory.iniciarTransaccion();
 			var dominio = new EspacioFisicoDominio.Builder()
 					.id(datos.getId())
 					.numeroEspacioFisico(datos.getNumeroEspacioFisico())
@@ -65,16 +65,16 @@ public class RegistrarEspacioFisicoFachadaImpl implements RegistrarEspacioFisico
 		try {
 			var dto = new EspacioFisicoDTO.Builder()
 					.tipoServicio(new TipoServicioDTO.Builder()
-							.id(UUID.fromString("UUID_DE_TIPOSERVICIO"))
+							.id(UUID.fromString("625a474a-1f5a-4590-860f-9635d49a9a23"))
 							.build())
 					.estadoEspacioFisico(new EstadoEspacioFisicoDTO.Builder()
-							.id(UUID.fromString("UUID_DE_ESTADO_DISPONIBLE"))
+							.id(UUID.fromString("75db75b1-3f27-4e47-bf10-4f2e42764cf8"))
 							.build())
 					.zonaEspacioFisico(new ZonaParqueaderoDTO.Builder()
-							.id(UUID.fromString("UUID_DE_ZONA"))
+							.id(UUID.fromString("f71b7dc0-306a-4111-a652-3ebb9a619317"))
 							.build())
 					.parqueadero(new ParqueaderoDTO.Builder()
-							.id(UUID.fromString("UUID_DE_PARQUEADERO"))
+							.id(UUID.fromString("6f34728b-d0ee-4440-bd24-38b29b2ed427"))
 							.build())
 					.build();
 			new RegistrarEspacioFisicoFachadaImpl().ejecutar(dto);

@@ -31,6 +31,7 @@ public final class ServicioEntidadAssembler implements EntidadAssembler<Servicio
 				.nombreServicio(servicioAEnsamblar.getNombreServicio())
 				.tipoServicio(TipoServicioEntidadAssembler.getInstance().ensamblarEntidad(servicioAEnsamblar.getTipoServicio()))
 				.parqueadero(ParqueaderoEntidadAssembler.getInstance().ensamblarEntidad(servicioAEnsamblar.getParqueadero()))
+				.estadoActual(servicioAEnsamblar.isEstadoActual())
 				.build();
 	}
 
@@ -43,6 +44,7 @@ public final class ServicioEntidadAssembler implements EntidadAssembler<Servicio
 				.nombreServicio(servicioAEnsamblar.getNombreServicio())
 				.tipoServicio(TipoServicioEntidadAssembler.getInstance().ensamblarDominio(servicioAEnsamblar.getTipoServicio()))
 				.parqueadero(ParqueaderoEntidadAssembler.getInstance().ensamblarDominio(servicioAEnsamblar.getParqueadero()))
+				.estadoActual(servicioAEnsamblar.isEstadoActual())
 				.build();
 	}
 

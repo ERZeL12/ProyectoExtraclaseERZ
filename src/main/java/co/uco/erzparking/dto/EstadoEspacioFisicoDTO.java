@@ -9,6 +9,11 @@ public class EstadoEspacioFisicoDTO {
 	private UUID id;
 	private String nombreEstadoEspacioFisico;
 
+	public EstadoEspacioFisicoDTO() {
+		setId(UUID.fromString("00000000-0000-0000-0000-000000000000"));
+		setNombreEstadoEspacioFisico("");
+	}
+
 	private EstadoEspacioFisicoDTO(final Builder builder) {
 		setId(builder.id);
 		setNombreEstadoEspacioFisico(builder.nombreEstadoEspacioFisico);

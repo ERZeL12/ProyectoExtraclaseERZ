@@ -41,10 +41,15 @@ public class ConsultarTodosUsuariosFachadaImpl implements ConsultarTodosUsuarios
 		var tipoDocumentoIdentificacionDTO = d.getTipoDocumentoIdentificacion() != null
 				? new TipoDocumentoIdentificacionDTO.Builder()
 						.id(d.getTipoDocumentoIdentificacion().getId())
+						.nombreDocumentoIdentificacion(d.getTipoDocumentoIdentificacion().getNombreDocumentoIdentificacion())
+						.descripcion(d.getTipoDocumentoIdentificacion().getDescripcion())
 						.build()
 				: null;
 		var ciudadDTO = d.getCiudad() != null
-				? new CiudadDTO.Builder().id(d.getCiudad().getId()).build()
+				? new CiudadDTO.Builder()
+						.id(d.getCiudad().getId())
+						.nombre(d.getCiudad().getNombre())
+						.build()
 				: null;
 		return new UsuarioDTO.Builder()
 				.id(d.getId())
@@ -58,6 +63,18 @@ public class ConsultarTodosUsuariosFachadaImpl implements ConsultarTodosUsuarios
 				.correoElectronico(d.getCorreoElectronico())
 				.ciudad(ciudadDTO)
 				.build();
+	}
+
+	public static void main(final String[] args) {
+		try {
+			var filtro = new UsuarioDTO.Builder().build();
+			var resultado = new ConsultarTodosUsuariosFachadaImpl().ejecutar(filtro);
+			System.out.println("Total usuarios encontrados: " + resultado.size());
+			resultado.forEach(u -> System.out.println(" - " + u.getId() + " | " + u.getPrimerNombre() + " " + u.getPrimerApellido()));
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 
 }
